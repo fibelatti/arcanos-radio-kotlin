@@ -1,0 +1,130 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'com.getkeepsafe.dexcount'
+apply from: 'coverage-report.gradle'
+
+android {
+    compileSdkVersion Versions.compileSdkVersion
+    buildToolsVersion Versions.buildToolsVersion
+
+    defaultConfig {
+        applicationId AppInfo.applicationId
+        versionCode AppInfo.versionCode
+        versionName AppInfo.versionName
+        minSdkVersion Versions.minSdkVersion
+        targetSdkVersion Versions.targetSdkVersion
+
+        resConfigs "en"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("../keystore/debug.keystore")
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "app_name", AppInfo.appName + " Dev"
+
+            testCoverageEnabled = true
+            minifyEnabled false
+        }
+        release {
+            resValue "string", "app_name", AppInfo.appName
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+
+        String sharedTestDir = 'src/sharedTest/kotlin'
+        String sharedTestResDir = 'src/sharedTest/resources'
+
+        test {
+            java.srcDir sharedTestDir
+            java.srcDirs += sharedTestResDir
+            java.srcDirs += 'src/test/kotlin'
+        }
+
+        androidTest {
+            java.srcDir sharedTestDir
+            java.srcDirs += sharedTestResDir
+            java.srcDirs += 'src/androidTest/kotlin'
+        }
+    }
+
+    testOptions {
+        animationsDisabled true
+
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
+    }
+}
+
+preBuild.dependsOn ':ktlint'
+preBuild.dependsOn ':detekt'
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Kotlin
+    implementation KotlinDependencies.kotlin
+
+    // Support Library
+    implementation SupportLibraryDependencies.supportLibrary
+    implementation SupportLibraryDependencies.materialDesign
+    implementation SupportLibraryDependencies.constraintLayout
+
+    // DI
+    implementation DIDependencies.dagger
+    kapt DIDependencies.daggerCompiler
+
+    // Rx
+    implementation RxDependencies.rxJava
+    implementation RxDependencies.rxAndroid
+
+    // Network
+    implementation NetworkDependencies.retrofit
+    implementation NetworkDependencies.retrofitGsonConverter
+    implementation NetworkDependencies.retrofitAdapter
+    implementation NetworkDependencies.httpLoggingInterceptor
+
+    // Third Party
+    implementation ThirdPartyDependencies.gson
+
+    // Testing
+    testImplementation TestDependencies.junit
+    testImplementation TestDependencies.junit5
+    testImplementation TestDependencies.junit5Params
+    testImplementation TestDependencies.mockitoCore
+
+    testRuntimeOnly TestDependencies.junit5Engine
+    testRuntimeOnly TestDependencies.junitVintage
+
+    androidTestImplementation TestDependencies.mockitoAndroid
+    androidTestImplementation TestDependencies.supportAnnotations
+    androidTestImplementation TestDependencies.testRunner
+    androidTestImplementation TestDependencies.kotlinTest
+}
