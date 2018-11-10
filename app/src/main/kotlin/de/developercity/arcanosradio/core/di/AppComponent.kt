@@ -4,10 +4,14 @@ import dagger.BindsInstance
 import dagger.Component
 import de.developercity.arcanosradio.App
 import de.developercity.arcanosradio.core.di.modules.CoreModule
+import de.developercity.arcanosradio.core.di.modules.NetworkModule
+import de.developercity.arcanosradio.core.di.modules.StreamingModule
 import javax.inject.Singleton
 
 @Component(modules = [
-    CoreModule::class
+    CoreModule::class,
+    NetworkModule::class,
+    StreamingModule::class
 ])
 @Singleton
 interface AppComponent : Injector {

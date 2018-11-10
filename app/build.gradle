@@ -21,6 +21,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        buildConfigField "String", "API_URL", "\"https://api.arcanosmc.com.br\""
+        buildConfigField "String", "API_APPLICATION_ID", "\"arcanosRadio\""
     }
 
     signingConfigs {
