@@ -7,7 +7,6 @@ import de.developercity.arcanosradio.features.appstate.domain.AppState
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNetworkAvailable
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
-import de.developercity.arcanosradio.features.appstate.domain.UpdateScreenState
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStateAction
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamingConfig
@@ -39,7 +38,6 @@ class AppStateDataSource @Inject constructor(
             )
             is UpdateStreamState -> state.copy(streamState = updateStateAction.streamState)
             is UpdateNowPlaying -> state.copy(nowPlaying = updateStateAction.nowPlaying)
-            is UpdateScreenState -> state.copy(screenOn = updateStateAction.screenOn)
             is UpdateNetworkAvailable -> state.copy(networkAvailable = updateStateAction.available)
         }
         observableState.onNext(state)

@@ -11,6 +11,4 @@ class UpdateStreamState(val streamState: StreamingState) : UpdateStateAction()
 
 class UpdateNowPlaying(val nowPlaying: NowPlaying) : UpdateStateAction()
 
-class UpdateScreenState(val screenOn: Boolean) : UpdateStateAction()
-
 class UpdateNetworkAvailable(val available: Boolean) : UpdateStateAction()
