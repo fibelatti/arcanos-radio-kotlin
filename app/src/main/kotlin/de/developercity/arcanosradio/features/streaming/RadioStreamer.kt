@@ -5,6 +5,7 @@ import android.media.AudioAttributes.CONTENT_TYPE_MUSIC
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Handler
+import de.developercity.arcanosradio.core.extension.getMusicVolume
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class RadioStreamer @Inject constructor(private val audioManager: AudioManager?)
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
-            val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC)?.toFloat() ?: 0f
+            val volume = audioManager.getMusicVolume().toFloat()
 
             setAudioAttributes(AudioAttributes.Builder().setContentType(CONTENT_TYPE_MUSIC).build())
             setOnPreparedListener { it.start() }
