@@ -1,5 +1,6 @@
 package de.developercity.arcanosradio.core.platform.base
 
+import androidx.annotation.CallSuper
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -14,7 +15,8 @@ abstract class BasePresenter<V : BaseContract.View>(
         this.view = view
     }
 
-    fun detachView() {
+    @CallSuper
+    open fun detachView() {
         view = null
         viewDisposables.clear()
     }
