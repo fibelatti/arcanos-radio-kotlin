@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import androidx.appcompat.app.AppCompatDelegate
+import com.facebook.stetho.Stetho
 import de.developercity.arcanosradio.core.di.AppComponent
 import de.developercity.arcanosradio.core.di.DaggerAppComponent
 import de.developercity.arcanosradio.core.extension.getSystemService
@@ -35,6 +36,8 @@ class App : Application() {
 
         registerScreenStateBroadcastReceiver()
         registerNetworkCallback()
+
+        if (BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
     }
 
     private fun registerScreenStateBroadcastReceiver() {
