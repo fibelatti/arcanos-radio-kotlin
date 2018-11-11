@@ -10,14 +10,13 @@
     <color name="color_grey">#757575</color>
     <color name="color_grey_dark">#424242</color>
 
-    <color name="color_primary">#1C3547</color>
-    <color name="color_primary_dark">#062838</color>
-    <color name="color_primary_dark_transparent">#B2062838</color>
+    <color name="color_primary">#000000</color>
+    <color name="color_primary_dark">#000000</color>
     <color name="color_accent">#FED031</color>
 
-    <color name="color_status_bar">#1C3547</color>
-    <color name="color_background">#1C3547</color>
-    <color name="color_background_contrast">#062838</color>
+    <color name="color_status_bar">#000000</color>
+    <color name="color_background">#000000</color>
+    <color name="color_background_contrast">#282828</color>
     <color name="color_icon">#FED031</color>
 
     <color name="color_divider">#C2C2C2</color>

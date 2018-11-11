@@ -13,6 +13,7 @@
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowAnimationStyle">@style/AppTheme.AppActivityAnimation</item>
         <item name="android:alertDialogTheme">@style/AppTheme.AlertDialog</item>
+        <item name="android:windowContentTransitions">true</item>
         <item name="fontFamily">@font/opensansregular</item>
         <item name="buttonStyle">@style/AppTheme.ButtonPrimary</item>
         <item name="checkboxStyle">@style/AppTheme.Checkbox</item>
@@ -66,8 +67,8 @@
 
     <style name="AppTheme.InputLayout">
         <item name="android:textSize">@dimen/text_size_regular</item>
-        <item name="android:textColor">@color/text_secondary</item>
-        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_primary</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="colorControlNormal">@color/text_secondary</item>
         <item name="colorControlActivated">@color/color_accent</item>
@@ -153,14 +154,14 @@
         <item name="android:paddingRight">@dimen/padding_regular</item>
         <item name="android:elevation">@dimen/elevation_regular</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/color_white_opaque</item>
+        <item name="android:textColor">@color/color_primary</item>
         <item name="android:textSize">@dimen/text_size_regular</item>
         <item name="enforceTextAppearance">@style/TextAppearance.MaterialComponents.Button</item>
         <item name="backgroundTint">@drawable/selector_extended_fab</item>
         <item name="cornerRadius">@dimen/extended_fab_corner_radius</item>
         <item name="iconPadding">@dimen/padding_small</item>
         <item name="iconSize">@dimen/extended_fab_icon_size</item>
-        <item name="iconTint">@color/color_white_opaque</item>
+        <item name="iconTint">@color/color_primary</item>
     </style>
 
     <style name="AppTheme.ExtendedFab.Small">
