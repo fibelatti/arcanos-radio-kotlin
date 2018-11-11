@@ -23,6 +23,7 @@ object Versions {
     internal const val httpLoggingInterceptorVersion = "3.10.0"
 
     internal const val gsonVersion = "2.8.5"
+    internal const val picassoVersion = "2.71828"
 
     internal const val jUnitVersion = "4.12"
     internal const val testRunnerVersion = "1.0.1"
@@ -69,6 +70,7 @@ object NetworkDependencies {
 
 object ThirdPartyDependencies {
     val gson = "com.google.code.gson:gson:${Versions.gsonVersion}"
+    val picasso = "com.squareup.picasso:picasso:${Versions.picassoVersion}"
 }
 
 object TestDependencies {

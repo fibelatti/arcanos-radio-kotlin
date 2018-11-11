@@ -116,6 +116,7 @@ dependencies {
 
     // Third Party
     implementation ThirdPartyDependencies.gson
+    implementation ThirdPartyDependencies.picasso
 
     // Testing
     testImplementation TestDependencies.junit
