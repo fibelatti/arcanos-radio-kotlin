@@ -10,8 +10,10 @@
     tools:context=".features.splash.presentation.SplashActivity">
 
     <ImageView
+        android:id="@+id/imageViewAlbumArt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:transitionName="albumArtTransition"
         app:srcCompat="@drawable/arcanos" />
 </RelativeLayout>

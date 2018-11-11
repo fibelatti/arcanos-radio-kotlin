@@ -53,6 +53,14 @@ class NowPlayingPresenter @Inject constructor(
         radioStreamer.play()
     }
 
+    fun pause() {
+        radioStreamer.pause()
+    }
+
+    fun setVolume(volume: Float) {
+        radioStreamer.setVolume(volume)
+    }
+
     private fun observeAppState() {
         appStateRepository.getAppState()
             .subscribeOn(schedulerProvider.io())
