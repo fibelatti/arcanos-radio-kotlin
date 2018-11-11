@@ -15,18 +15,19 @@
     <color name="color_primary_dark_transparent">#B2062838</color>
     <color name="color_accent">#FED031</color>
 
-    <color name="color_status_bar">#9E9E9E</color>
-    <color name="color_background">#F5F5F5</color>
-    <color name="color_background_contrast">#E8E8E8</color>
-    <color name="color_icon">#282828</color>
+    <color name="color_status_bar">#1C3547</color>
+    <color name="color_background">#1C3547</color>
+    <color name="color_background_contrast">#062838</color>
+    <color name="color_icon">#FED031</color>
 
     <color name="color_divider">#C2C2C2</color>
 
-    <color name="text_primary">#424242</color>
+    <color name="text_accent">#FED031</color>
+    <color name="text_primary">#F5F5F5</color>
     <color name="text_secondary">#757575</color>
     <color name="text_white">#F5F5F5</color>
 
-    <color name="button_primary">#FF4081</color>
+    <color name="button_primary">#FED031</color>
 
     <color name="app_red">#F44336</color>
 </resources>
