@@ -1,5 +1,7 @@
 package de.developercity.arcanosradio.features.nowplaying.presentation
 
+import android.util.Log
+import de.developercity.arcanosradio.core.platform.TAG
 import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
@@ -62,11 +64,20 @@ class NowPlayingPresenter @Inject constructor(
             .observeOn(schedulerProvider.main())
             .subscribe(
                 { appState ->
-                    if (appState.streamState == StreamingState.NotInitialized) {
-                        radioStreamer.run {
-                            setStreamingUrl(appState.streamingUrl)
-                            play()
+                    Log.d(TAG, "$TAG - $appState")
+
+                    when (appState.streamState) {
+                        StreamingState.NotInitialized -> {
+                            radioStreamer.run {
+                                setStreamingUrl(appState.streamingUrl)
+                                play()
+                            }
                         }
+                        StreamingState.Interrupted -> radioStreamer.play()
+                    }
+
+                    if (!appState.networkAvailable) {
+                        radioStreamer.interrupt()
                     }
 
                     shouldPollMetadata.onNext(appState.screenOn)

@@ -5,4 +5,5 @@ sealed class StreamingState {
     object Buffering : StreamingState()
     object Playing : StreamingState()
     object Paused : StreamingState()
+    object Interrupted : StreamingState()
 }

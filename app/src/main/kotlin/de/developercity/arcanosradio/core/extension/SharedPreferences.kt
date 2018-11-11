@@ -8,7 +8,7 @@ import android.content.SharedPreferences
 fun Context.getSharedPreferences(name: String): SharedPreferences =
     getSharedPreferences(name, MODE_PRIVATE)
 
-fun Context.getUserPreferences() = getSharedPreferences("user_preferences")
+fun Context.getUserPreferences(): SharedPreferences = getSharedPreferences("user_preferences")
 // endregion
 
 // region Operations on SharedPreferences

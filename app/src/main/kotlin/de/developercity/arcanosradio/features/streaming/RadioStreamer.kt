@@ -66,6 +66,11 @@ class RadioStreamer @Inject constructor(private val audioManager: AudioManager?)
         observableState.onNext(StreamingState.Paused)
     }
 
+    fun interrupt() {
+        mediaPlayer.pause()
+        observableState.onNext(StreamingState.Interrupted)
+    }
+
     fun release() {
         mediaPlayer.run {
             reset()

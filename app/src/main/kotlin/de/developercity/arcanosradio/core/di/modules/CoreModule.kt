@@ -2,6 +2,7 @@ package de.developercity.arcanosradio.core.di.modules
 
 import android.content.Context
 import android.media.AudioManager
+import android.net.ConnectivityManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Binds
@@ -9,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import de.developercity.arcanosradio.App
 import de.developercity.arcanosradio.core.extension.getSystemService
+import de.developercity.arcanosradio.core.extension.getUserPreferences
 import de.developercity.arcanosradio.core.platform.AppResourceProvider
 import de.developercity.arcanosradio.core.provider.AppSchedulerProvider
 import de.developercity.arcanosradio.core.provider.ResourceProvider
@@ -46,5 +48,13 @@ object CoreModule {
 
     @Provides
     @JvmStatic
+    fun userPreferences(context: Context) = context.getUserPreferences()
+
+    @Provides
+    @JvmStatic
     fun audioManager(context: Context): AudioManager? = context.getSystemService<AudioManager>()
+
+    @Provides
+    @JvmStatic
+    fun connectivityManager(context: Context): ConnectivityManager? = context.getSystemService<ConnectivityManager>()
 }
