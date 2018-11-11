@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_regular"
+    tools:context=".features.nowplaying.presentation.NowPlayingActivity">
+
+    <ImageView
+        android:id="@+id/imageViewAlbumArt"
+        android:layout_width="@dimen/album_art_large"
+        android:layout_height="@dimen/album_art_large"
+        android:contentDescription="@string/now_playing_album_art"
+        android:transitionName="albumArtTransition"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arcanos" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonPlayControl"
+        style="@style/AppTheme.ExtendedFab"
+        android:layout_marginBottom="@dimen/margin_regular"
+        android:text="@string/now_playing_buffering"
+        app:icon="@drawable/ic_loading"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewAlbumArt"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageViewAlbumArt" />
+
+    <TextView
+        android:id="@+id/textViewSong"
+        style="@style/AppTheme.Text.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_regular"
+        android:gravity="center"
+        android:text="@string/now_playing_default_title"
+        app:layout_constraintBottom_toTopOf="@+id/textViewArtist"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonPlayControl" />
+
+    <TextView
+        android:id="@+id/textViewArtist"
+        style="@style/AppTheme.Text.Body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSong"
+        tools:text="Dark Chest of Wonders" />
+
+    <Button
+        android:id="@+id/buttonLyrics"
+        style="@style/AppTheme.ButtonPrimary.Small"
+        android:layout_marginTop="@dimen/margin_regular"
+        android:text="@string/now_playing_show_lyrics"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewArtist" />
+
+    <ScrollView
+        android:id="@+id/layoutLyrics"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/padding_regular"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonLyrics"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLyrics"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/textViewLyrics"
+            style="@style/AppTheme.Text.Body.White"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            tools:text="@tools:sample/lorem" />
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/textViewVolume"
+        style="@style/AppTheme.Text.Detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/now_playing_volume"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintBottom_toTopOf="@+id/seekVolume"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekVolume"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/buttonOpenInBrowser" />
+
+    <ImageView
+        android:id="@+id/buttonOpenInBrowser"
+        style="@style/AppTheme.ClickableIcon"
+        android:contentDescription="@string/now_playing_share"
+        android:tint="@color/color_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/seekVolume"
+        app:layout_constraintRight_toLeftOf="@+id/buttonShare"
+        app:srcCompat="@drawable/ic_open_in_browser" />
+
+    <ImageView
+        android:id="@+id/buttonShare"
+        style="@style/AppTheme.ClickableIcon"
+        android:contentDescription="@string/now_playing_see_website"
+        android:tint="@color/color_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/buttonOpenInBrowser"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_share" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

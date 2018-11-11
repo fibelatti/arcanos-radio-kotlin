@@ -21,8 +21,10 @@ object Versions {
 
     internal const val retrofitVersion = "2.4.0"
     internal const val httpLoggingInterceptorVersion = "3.10.0"
+    internal const val stethoVersion = "1.5.0"
 
     internal const val gsonVersion = "2.8.5"
+    internal const val picassoVersion = "2.71828"
 
     internal const val jUnitVersion = "4.12"
     internal const val testRunnerVersion = "1.0.1"
@@ -65,10 +67,13 @@ object NetworkDependencies {
     val retrofitGsonConverter = "com.squareup.retrofit2:converter-gson:${Versions.retrofitVersion}"
     val retrofitAdapter = "com.squareup.retrofit2:adapter-rxjava2:${Versions.retrofitVersion}"
     val httpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.httpLoggingInterceptorVersion}"
+    val stetho = "com.facebook.stetho:stetho:${Versions.stethoVersion}"
+    val stethoOkHttp = "com.facebook.stetho:stetho-okhttp3:${Versions.stethoVersion}"
 }
 
 object ThirdPartyDependencies {
     val gson = "com.google.code.gson:gson:${Versions.gsonVersion}"
+    val picasso = "com.squareup.picasso:picasso:${Versions.picassoVersion}"
 }
 
 object TestDependencies {

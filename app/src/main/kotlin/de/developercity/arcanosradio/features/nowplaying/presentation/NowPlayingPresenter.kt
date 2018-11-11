@@ -13,8 +13,6 @@ import de.developercity.arcanosradio.features.streaming.domain.StreamingReposito
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
-import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -39,9 +37,6 @@ class NowPlayingPresenter @Inject constructor(
         fun showSongMetadata(nowPlaying: NowPlaying)
     }
 
-    private val shouldPollMetadata: PublishSubject<Boolean> = PublishSubject.create<Boolean>()
-        .also { it.onNext(false) }
-
     override fun detachView() {
         super.detachView()
         radioStreamer.release()
@@ -56,6 +51,14 @@ class NowPlayingPresenter @Inject constructor(
 
     fun play() {
         radioStreamer.play()
+    }
+
+    fun pause() {
+        radioStreamer.pause()
+    }
+
+    fun setVolume(volume: Float) {
+        radioStreamer.setVolume(volume)
     }
 
     private fun observeAppState() {
@@ -80,17 +83,13 @@ class NowPlayingPresenter @Inject constructor(
                         radioStreamer.interrupt()
                     }
 
-                    shouldPollMetadata.onNext(appState.screenOn)
-
-                    if (appState.screenOn) {
-                        when (appState.streamState) {
-                            StreamingState.Buffering -> view?.buffering()
-                            StreamingState.Playing -> view?.playing()
-                            StreamingState.Paused -> view?.readyToPlay()
-                        }
-
-                        appState.nowPlaying?.let { view?.showSongMetadata(it) }
+                    when (appState.streamState) {
+                        StreamingState.Buffering -> view?.buffering()
+                        StreamingState.Playing -> view?.playing()
+                        StreamingState.Paused -> view?.readyToPlay()
                     }
+
+                    appState.nowPlaying?.let { view?.showSongMetadata(it) }
                 },
                 { view?.handleError(it) }
             )
@@ -106,15 +105,10 @@ class NowPlayingPresenter @Inject constructor(
 
     private fun setupSongMetadataPolling() {
         Observable.interval(0, POLL_INTERVAL, TimeUnit.SECONDS, schedulerProvider.io())
-            .withLatestFrom(shouldPollMetadata, BiFunction<Long, Boolean, Boolean> { _, shouldPoll -> shouldPoll })
-            .flatMap { shouldPoll ->
-                return@flatMap if (shouldPoll) {
-                    streamingRepository.getCurrentSongMetadata()
-                        .toObservable()
-                        .onErrorResumeNext(Observable.empty())
-                } else {
-                    Observable.empty<NowPlaying>()
-                }
+            .flatMap {
+                streamingRepository.getCurrentSongMetadata()
+                    .toObservable()
+                    .onErrorResumeNext(Observable.empty())
             }
             .distinctUntilChanged()
             .subscribeOn(schedulerProvider.io())

@@ -8,6 +8,5 @@ data class AppState(
     val streamingUrl: String = "",
     val streamState: StreamingState = StreamingState.NotInitialized,
     val nowPlaying: NowPlaying? = null,
-    val screenOn: Boolean = true,
     val networkAvailable: Boolean = false
 )

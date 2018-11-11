@@ -38,4 +38,7 @@
     <dimen name="extended_fab_corner_radius">32dp</dimen>
     <dimen name="extended_fab_icon_size_small">16dp</dimen>
     <dimen name="extended_fab_icon_size">24dp</dimen>
+
+    <dimen name="album_art_large">320dp</dimen>
+    <dimen name="album_art_small">130dp</dimen>
 </resources>
