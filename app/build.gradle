@@ -113,8 +113,8 @@ dependencies {
     implementation NetworkDependencies.retrofitGsonConverter
     implementation NetworkDependencies.retrofitAdapter
     implementation NetworkDependencies.httpLoggingInterceptor
-    debugImplementation NetworkDependencies.stetho
-    debugImplementation NetworkDependencies.stethoOkHttp
+    implementation NetworkDependencies.stetho
+    implementation NetworkDependencies.stethoOkHttp
 
     // Third Party
     implementation ThirdPartyDependencies.gson
