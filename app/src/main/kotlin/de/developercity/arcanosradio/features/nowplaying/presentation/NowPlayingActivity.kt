@@ -1,8 +1,11 @@
 package de.developercity.arcanosradio.features.nowplaying.presentation
 
+import android.content.Context
 import android.os.Bundle
 import de.developercity.arcanosradio.R
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
+import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
+import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import javax.inject.Inject
 
 class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
@@ -40,4 +43,10 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     override fun paused() {
         // TODO
     }
+
+    override fun showSongMetadata(nowPlaying: NowPlaying) {
+        // TODO
+    }
+
+    class IntentBuilder(context: Context) : BaseIntentBuilder(context, NowPlayingActivity::class.java)
 }
