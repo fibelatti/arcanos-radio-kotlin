@@ -13,7 +13,7 @@ class SplashActivity : BaseActivity(), SplashPresenter.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.acitivity_player)
+        setContentView(R.layout.activity_splash)
 
         injector.inject(this)
 
