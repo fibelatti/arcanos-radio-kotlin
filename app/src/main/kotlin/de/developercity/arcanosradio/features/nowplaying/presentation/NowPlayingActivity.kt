@@ -10,6 +10,7 @@ import android.widget.SeekBar
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import de.developercity.arcanosradio.R
 import de.developercity.arcanosradio.core.extension.animateChangingTransitions
 import de.developercity.arcanosradio.core.extension.getMusicMaxVolume
@@ -19,7 +20,7 @@ import de.developercity.arcanosradio.core.extension.load
 import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
-import de.developercity.arcanosradio.features.streaming.MetadataPollingService
+import de.developercity.arcanosradio.features.streaming.StreamingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import kotlinx.android.synthetic.main.activity_now_playing.*
 import javax.inject.Inject
@@ -103,7 +104,7 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     }
 
     override fun streamerReady() {
-        startService(Intent(this, MetadataPollingService::class.java))
+        ContextCompat.startForegroundService(this, Intent(this, StreamingService::class.java))
     }
 
     override fun readyToPlay() {
@@ -128,7 +129,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
             nowPlayingPresenter.play()
         }
-        stopService(Intent(this, MetadataPollingService::class.java))
     }
 
     private inline fun setupButtonPlayControl(

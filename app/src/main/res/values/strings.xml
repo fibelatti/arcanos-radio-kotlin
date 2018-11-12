@@ -18,6 +18,7 @@
 
     <!-- Now Playing -->
     <string name="now_playing_default_title">Arcanos Web Rock</string>
+    <string name="now_playing_default_subtitle">Arcanos Web Rock</string>
 
     <string name="now_playing_album_art">Album art</string>
 
@@ -31,4 +32,8 @@
 
     <string name="now_playing_share">Share</string>
     <string name="now_playing_see_website">See artist website</string>
+
+    <!-- Now Playing Notification -->
+    <string name="now_playing_notification_channel_name">Radio Streaming</string>
+    <string name="now_playing_notification_channel_description">Radio playback controls</string>
 </resources>

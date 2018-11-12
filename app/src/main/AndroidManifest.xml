@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -38,7 +40,7 @@
 
         <!-- SERVICE -->
         <service
-            android:name=".features.streaming.MetadataPollingService"
+            android:name=".features.streaming.StreamingService"
             android:exported="false" />
     </application>
 </manifest>
