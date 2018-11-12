@@ -99,6 +99,7 @@ dependencies {
     implementation SupportLibraryDependencies.supportLibrary
     implementation SupportLibraryDependencies.materialDesign
     implementation SupportLibraryDependencies.constraintLayout
+    implementation SupportLibraryDependencies.media
 
     // DI
     implementation DIDependencies.dagger

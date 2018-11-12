@@ -50,6 +50,7 @@ object SupportLibraryDependencies {
     val supportLibrary = "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     val materialDesign = "com.google.android.material:material:${Versions.materialDesignVersion}"
     val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayoutVersion}"
+    val media = "androidx.media:media:${Versions.appCompatVersion}"
 }
 
 object DIDependencies {
