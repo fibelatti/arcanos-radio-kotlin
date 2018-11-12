@@ -6,25 +6,20 @@ import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
-import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
 import de.developercity.arcanosradio.features.streaming.RadioStreamer
-import de.developercity.arcanosradio.features.streaming.domain.StreamingRepository
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
-private const val POLL_INTERVAL = 10L
 
 class NowPlayingPresenter @Inject constructor(
     schedulerProvider: SchedulerProvider,
     private val appStateRepository: AppStateRepository,
-    private val streamingRepository: StreamingRepository,
     private val radioStreamer: RadioStreamer
 ) : BasePresenter<NowPlayingPresenter.View>(schedulerProvider) {
 
     interface View : BaseContract.View {
+        fun streamerReady()
+
         fun readyToPlay()
 
         fun buffering()
@@ -44,10 +39,10 @@ class NowPlayingPresenter @Inject constructor(
     fun setup() {
         view?.buffering()
         observeAppState()
-        setupSongMetadataPolling()
     }
 
     fun play() {
+        view?.streamerReady()
         radioStreamer.play()
     }
 
@@ -73,6 +68,7 @@ class NowPlayingPresenter @Inject constructor(
                                 setStreamingUrl(appState.streamingUrl)
                                 play()
                             }
+                            view?.streamerReady()
                         }
                         StreamingState.Interrupted -> radioStreamer.play()
                     }
@@ -91,19 +87,6 @@ class NowPlayingPresenter @Inject constructor(
                 },
                 { view?.handleError(it) }
             )
-            .disposeOnDetach()
-    }
-
-    private fun setupSongMetadataPolling() {
-        Observable.interval(0, POLL_INTERVAL, TimeUnit.SECONDS, schedulerProvider.io())
-            .flatMap {
-                streamingRepository.getCurrentSongMetadata()
-                    .toObservable()
-                    .onErrorResumeNext(Observable.empty())
-            }
-            .distinctUntilChanged()
-            .subscribeOn(schedulerProvider.io())
-            .subscribe { appStateRepository.updateState(UpdateNowPlaying(it)) }
             .disposeOnDetach()
     }
 }

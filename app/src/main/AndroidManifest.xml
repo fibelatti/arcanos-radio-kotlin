@@ -35,5 +35,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+
+        <!-- SERVICE -->
+        <service
+            android:name=".features.streaming.MetadataPollingService"
+            android:exported="false" />
     </application>
 </manifest>

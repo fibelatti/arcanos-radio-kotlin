@@ -1,6 +1,7 @@
 package de.developercity.arcanosradio.features.nowplaying.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import android.provider.Settings.System.CONTENT_URI
@@ -18,6 +19,7 @@ import de.developercity.arcanosradio.core.extension.load
 import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
+import de.developercity.arcanosradio.features.streaming.MetadataPollingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import kotlinx.android.synthetic.main.activity_now_playing.*
 import javax.inject.Inject
@@ -100,6 +102,10 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         contentResolver.unregisterContentObserver(volumeObserver)
     }
 
+    override fun streamerReady() {
+        startService(Intent(this, MetadataPollingService::class.java))
+    }
+
     override fun readyToPlay() {
         setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
             nowPlayingPresenter.play()
@@ -122,6 +128,7 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
             nowPlayingPresenter.play()
         }
+        stopService(Intent(this, MetadataPollingService::class.java))
     }
 
     private inline fun setupButtonPlayControl(
