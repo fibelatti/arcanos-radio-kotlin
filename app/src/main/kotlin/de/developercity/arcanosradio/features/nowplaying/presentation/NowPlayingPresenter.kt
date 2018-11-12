@@ -7,7 +7,6 @@ import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.streaming.RadioStreamer
 import de.developercity.arcanosradio.features.streaming.domain.StreamingRepository
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
@@ -45,7 +44,6 @@ class NowPlayingPresenter @Inject constructor(
     fun setup() {
         view?.buffering()
         observeAppState()
-        observeStreamerState()
         setupSongMetadataPolling()
     }
 
@@ -93,13 +91,6 @@ class NowPlayingPresenter @Inject constructor(
                 },
                 { view?.handleError(it) }
             )
-            .disposeOnDetach()
-    }
-
-    private fun observeStreamerState() {
-        radioStreamer.getState()
-            .subscribeOn(schedulerProvider.io())
-            .subscribe { appStateRepository.updateState(UpdateStreamState(it)) }
             .disposeOnDetach()
     }
 

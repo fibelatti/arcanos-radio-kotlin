@@ -6,17 +6,20 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Handler
 import de.developercity.arcanosradio.core.extension.getMusicVolume
+import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
+import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
-import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val BUFFER_DELAY = 500L
 
 @Singleton
-class RadioStreamer @Inject constructor(private val audioManager: AudioManager?) {
+class RadioStreamer @Inject constructor(
+    private val audioManager: AudioManager?,
+    private val appStateRepository: AppStateRepository
+) {
 
-    private val observableState: BehaviorSubject<StreamingState> = BehaviorSubject.create()
     private var streamingUrl: String = ""
 
     private val mediaPlayer by lazy {
@@ -33,16 +36,14 @@ class RadioStreamer @Inject constructor(private val audioManager: AudioManager?)
     private val bufferCheck = object : Runnable {
         override fun run() {
             if (mediaPlayer.currentPosition > 0) {
-                observableState.onNext(StreamingState.Playing)
+                updateAppState(StreamingState.Playing)
                 handler.removeCallbacks(this)
             } else {
-                observableState.onNext(StreamingState.Buffering)
+                updateAppState(StreamingState.Buffering)
                 handler.postDelayed(this, BUFFER_DELAY)
             }
         }
     }
-
-    fun getState() = observableState
 
     fun setStreamingUrl(url: String) {
         streamingUrl = url
@@ -55,21 +56,21 @@ class RadioStreamer @Inject constructor(private val audioManager: AudioManager?)
                 setDataSource(streamingUrl)
                 prepareAsync()
             }
-            observableState.onNext(StreamingState.Buffering)
+            updateAppState(StreamingState.Buffering)
             handler.postDelayed(bufferCheck, BUFFER_DELAY)
         } else {
-            observableState.onNext(StreamingState.Playing)
+            updateAppState(StreamingState.Playing)
         }
     }
 
     fun pause() {
         mediaPlayer.pause()
-        observableState.onNext(StreamingState.Paused)
+        updateAppState(StreamingState.Paused)
     }
 
     fun interrupt() {
         mediaPlayer.pause()
-        observableState.onNext(StreamingState.Interrupted)
+        updateAppState(StreamingState.Interrupted)
     }
 
     fun release() {
@@ -77,11 +78,14 @@ class RadioStreamer @Inject constructor(private val audioManager: AudioManager?)
             reset()
             release()
         }
-        observableState.onComplete()
         handler.removeCallbacks(bufferCheck)
     }
 
     fun setVolume(volume: Float) {
         mediaPlayer.setVolume(volume, volume)
+    }
+
+    private fun updateAppState(streamingState: StreamingState) {
+        appStateRepository.updateState(UpdateStreamState(streamingState))
     }
 }
