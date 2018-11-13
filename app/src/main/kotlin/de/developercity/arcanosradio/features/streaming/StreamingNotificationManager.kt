@@ -42,8 +42,7 @@ class StreamingNotificationManager @Inject constructor(
         albumArt: Bitmap,
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
-        actionPendingIntent: PendingIntent,
-        cancelPendingIntent: PendingIntent
+        actionPendingIntent: PendingIntent
     ): Notification {
         createNotificationChannel()
 
@@ -52,7 +51,6 @@ class StreamingNotificationManager @Inject constructor(
                 .setMediaSession(mediaSession.sessionToken)
                 .setShowCancelButton(true)
                 .setShowActionsInCompactView(0)
-                .setCancelButtonIntent(cancelPendingIntent)
             )
             .apply { mActions.clear() }
             .addAction(NotificationCompat.Action.Builder(
@@ -67,7 +65,6 @@ class StreamingNotificationManager @Inject constructor(
             .setContentTitle(song)
             .setContentText(artist)
             .setLargeIcon(albumArt)
-            .setDeleteIntent(cancelPendingIntent)
             .build()
     }
 
@@ -77,8 +74,7 @@ class StreamingNotificationManager @Inject constructor(
         albumArt: Bitmap,
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
-        actionPendingIntent: PendingIntent,
-        cancelPendingIntent: PendingIntent
+        actionPendingIntent: PendingIntent
     ) {
         notificationManager?.notify(
             NOTIFICATION_ID,
@@ -88,8 +84,7 @@ class StreamingNotificationManager @Inject constructor(
                 albumArt = albumArt,
                 actionIcon = actionIcon,
                 actionDescription = actionDescription,
-                actionPendingIntent = actionPendingIntent,
-                cancelPendingIntent = cancelPendingIntent
+                actionPendingIntent = actionPendingIntent
             )
         )
     }
@@ -99,8 +94,7 @@ class StreamingNotificationManager @Inject constructor(
         defaultAlbumArt: Bitmap,
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
-        actionPendingIntent: PendingIntent,
-        cancelPendingIntent: PendingIntent
+        actionPendingIntent: PendingIntent
     ) {
         with(nowPlaying) {
             Picasso.get().load(song.albumArt)
@@ -116,8 +110,7 @@ class StreamingNotificationManager @Inject constructor(
                             albumArt = defaultAlbumArt,
                             actionIcon = actionIcon,
                             actionDescription = actionDescription,
-                            actionPendingIntent = actionPendingIntent,
-                            cancelPendingIntent = cancelPendingIntent
+                            actionPendingIntent = actionPendingIntent
                         )
                     }
 
@@ -128,8 +121,7 @@ class StreamingNotificationManager @Inject constructor(
                             albumArt = bitmap,
                             actionIcon = actionIcon,
                             actionDescription = actionDescription,
-                            actionPendingIntent = actionPendingIntent,
-                            cancelPendingIntent = cancelPendingIntent
+                            actionPendingIntent = actionPendingIntent
                         )
                     }
                 })

@@ -86,8 +86,7 @@ class StreamingService : BaseService() {
                 albumArt = defaultAlbumArt,
                 actionIcon = R.drawable.ic_loading,
                 actionDescription = R.string.now_playing_buffering,
-                actionPendingIntent = pauseIntent,
-                cancelPendingIntent = pauseIntent
+                actionPendingIntent = pauseIntent
             )
         )
     }
@@ -112,16 +111,16 @@ class StreamingService : BaseService() {
             .subscribe { state ->
                 when (state.streamState) {
                     StreamingState.Paused -> {
-                        disposables.clear()
                         streamingNotificationManager.showNotification(
                             song = getString(R.string.now_playing_default_title),
                             artist = getString(R.string.now_playing_default_subtitle),
                             albumArt = defaultAlbumArt,
                             actionIcon = R.drawable.ic_play,
                             actionDescription = R.string.now_playing_play,
-                            actionPendingIntent = playIntent,
-                            cancelPendingIntent = pauseIntent
+                            actionPendingIntent = playIntent
                         )
+                        stopForeground(false)
+                        disposables.clear()
                     }
                     else -> state.nowPlaying?.let {
                         val (icon, description, intent) = when (state.streamState) {
@@ -130,14 +129,12 @@ class StreamingService : BaseService() {
                             else -> Triple(R.drawable.ic_loading, R.string.now_playing_buffering, pauseIntent)
                         }
 
-                        streamingNotificationManager.showNotification(
-                            song = getString(R.string.now_playing_default_title),
-                            artist = getString(R.string.now_playing_default_subtitle),
-                            albumArt = defaultAlbumArt,
+                        streamingNotificationManager.showNowPlayingNotification(
+                            nowPlaying = state.nowPlaying,
+                            defaultAlbumArt = defaultAlbumArt,
                             actionIcon = icon,
                             actionDescription = description,
-                            actionPendingIntent = intent,
-                            cancelPendingIntent = pauseIntent
+                            actionPendingIntent = intent
                         )
                     }
                 }
