@@ -18,7 +18,7 @@
 
     <!-- Now Playing -->
     <string name="now_playing_default_title">Arcanos Web Rock</string>
-    <string name="now_playing_default_subtitle">The radio for those who live rock and roll!</string>
+    <string name="now_playing_default_subtitle">The radio for those who live rock!</string>
 
     <string name="now_playing_album_art">Album art</string>
 

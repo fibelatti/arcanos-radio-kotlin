@@ -26,14 +26,7 @@ class NowPlayingPresenter @Inject constructor(
 
         fun playing()
 
-        fun paused()
-
         fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
-    }
-
-    override fun detachView() {
-        super.detachView()
-        radioStreamer.release()
     }
 
     fun setup() {
@@ -64,26 +57,24 @@ class NowPlayingPresenter @Inject constructor(
 
                     when (appState.streamState) {
                         StreamingState.NotInitialized -> {
-                            radioStreamer.run {
-                                setStreamingUrl(appState.streamingUrl)
-                                play()
-                            }
+                            radioStreamer.setup(appState.streamingUrl)
                             view?.streamerReady()
                         }
                         StreamingState.Interrupted -> radioStreamer.play()
+                        StreamingState.Buffering -> {
+                            appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
+                            view?.buffering()
+                        }
+                        StreamingState.Playing -> {
+                            appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
+                            view?.playing()
+                        }
+                        StreamingState.Paused -> view?.readyToPlay()
                     }
 
                     if (!appState.networkAvailable) {
                         radioStreamer.interrupt()
                     }
-
-                    when (appState.streamState) {
-                        StreamingState.Buffering -> view?.buffering()
-                        StreamingState.Playing -> view?.playing()
-                        StreamingState.Paused -> view?.readyToPlay()
-                    }
-
-                    appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
                 },
                 { view?.handleError(it) }
             )

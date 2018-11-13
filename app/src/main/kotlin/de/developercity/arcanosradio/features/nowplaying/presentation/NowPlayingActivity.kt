@@ -112,9 +112,13 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     }
 
     override fun readyToPlay() {
+        imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
         setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
             nowPlayingPresenter.play()
         }
+        textViewSong.setText(R.string.now_playing_default_title)
+        textViewArtist.setText(R.string.now_playing_default_subtitle)
+        buttonLyrics.gone()
     }
 
     override fun buffering() {
@@ -126,12 +130,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     override fun playing() {
         setupButtonPlayControl(R.string.now_playing_pause, R.drawable.ic_pause) {
             nowPlayingPresenter.pause()
-        }
-    }
-
-    override fun paused() {
-        setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
-            nowPlayingPresenter.play()
         }
     }
 
@@ -153,6 +151,7 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
             textViewSong.text = name
             textViewArtist.text = artist.name
             textViewLyrics.text = lyrics
+            buttonLyrics.visible()
 
             setupOpenInBrowser(artist.url)
             setupShare(nowPlaying.song, shareUrl)

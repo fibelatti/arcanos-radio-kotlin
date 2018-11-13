@@ -22,7 +22,6 @@ import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import javax.inject.Inject
 
 private const val CHANNEL_ID = "arcanos_media_playback_channel"
-private const val MEDIA_SESSION_TAG = "ARCANOS_MEDIA_SESSION_TAG"
 private const val NOTIFICATION_ID = 1337
 
 class StreamingNotificationManager @Inject constructor(
@@ -32,7 +31,6 @@ class StreamingNotificationManager @Inject constructor(
 
     private val notificationManager: NotificationManager? = context.getSystemService<NotificationManager>()
     private val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(context, CHANNEL_ID)
-    private val mediaSession: MediaSessionCompat = MediaSessionCompat(context, MEDIA_SESSION_TAG)
 
     fun getNotificationId(): Int = NOTIFICATION_ID
 
@@ -43,16 +41,26 @@ class StreamingNotificationManager @Inject constructor(
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
         actionPendingIntent: PendingIntent,
-        tapIntent: PendingIntent? = null
+        tapIntent: PendingIntent? = null,
+        deleteIntent: PendingIntent? = null,
+        mediaSessionToken: MediaSessionCompat.Token? = null
     ): Notification {
         createNotificationChannel()
 
         return notificationBuilder
-            .setStyle(MediaStyle()
-                .setMediaSession(mediaSession.sessionToken)
-                .setShowActionsInCompactView(0)
-            )
-            .apply { mActions.clear() }
+            .setSmallIcon(R.drawable.ic_radio)
+            .apply {
+                mediaSessionToken?.let {
+                    setStyle(MediaStyle()
+                        .setMediaSession(mediaSessionToken)
+                        .setShowActionsInCompactView(0)
+                    )
+                }
+            }
+            .setContentTitle(song)
+            .setContentText(artist)
+            .setLargeIcon(albumArt)
+            .clearActions()
             .addAction(
                 NotificationCompat.Action.Builder(
                     actionIcon,
@@ -60,13 +68,10 @@ class StreamingNotificationManager @Inject constructor(
                     actionPendingIntent
                 ).build()
             )
-            .setSmallIcon(R.drawable.ic_radio)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .apply { tapIntent?.let(::setContentIntent) }
-            .setContentTitle(song)
-            .setContentText(artist)
-            .setLargeIcon(albumArt)
+            .apply { deleteIntent?.let(::setDeleteIntent) }
             .build()
     }
 
@@ -145,4 +150,6 @@ class StreamingNotificationManager @Inject constructor(
             )
         }
     }
+
+    private fun NotificationCompat.Builder.clearActions() = apply { mActions.clear() }
 }

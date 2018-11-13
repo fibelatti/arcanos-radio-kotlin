@@ -3,6 +3,9 @@ package de.developercity.arcanosradio.features.streaming
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.support.v4.media.session.MediaSessionCompat
+import android.view.KeyEvent
+import androidx.media.session.MediaButtonReceiver
 import de.developercity.arcanosradio.R
 import de.developercity.arcanosradio.core.extension.getActivityPendingIntent
 import de.developercity.arcanosradio.core.extension.getServicePendingIntent
@@ -11,6 +14,7 @@ import de.developercity.arcanosradio.core.platform.base.BaseService
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
+import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.nowplaying.presentation.NowPlayingActivity
 import de.developercity.arcanosradio.features.streaming.domain.StreamingRepository
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
@@ -20,6 +24,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 private const val POLL_INTERVAL = 10L
+private const val MEDIA_SESSION_TAG = "ARCANOS_MEDIA_SESSION_TAG"
 
 class StreamingService : BaseService() {
 
@@ -38,6 +43,8 @@ class StreamingService : BaseService() {
 
     private val defaultAlbumArt by lazy { BitmapFactory.decodeResource(resources, R.drawable.arcanos) }
 
+    private val mediaSession: MediaSessionCompat by lazy { MediaSessionCompat(this, MEDIA_SESSION_TAG) }
+
     // region Intent
     private val playIntent by lazy {
         getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_PLAY).build())
@@ -47,14 +54,19 @@ class StreamingService : BaseService() {
     }
     // endregion
 
+    private var mediaButtonCallback: () -> Unit = {}
+
     override fun onCreate() {
         super.onCreate()
         injector.inject(this)
+
+        setMediaSessionCallback()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action != Action.ACTION_DELETE.value) startNotification()
+
         handleIntent(intent)
-        startNotification()
         pollMetadata()
         observeAppState()
 
@@ -62,10 +74,26 @@ class StreamingService : BaseService() {
     }
 
     private fun handleIntent(intent: Intent?) {
+        MediaButtonReceiver.handleIntent(mediaSession, intent)
         when (intent?.action) {
             Action.ACTION_PLAY.value -> radioStreamer.play()
             Action.ACTION_PAUSE.value -> radioStreamer.pause()
+            Action.ACTION_DELETE.value -> tearDown()
         }
+    }
+
+    private fun setMediaSessionCallback() {
+        mediaSession.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+                return when (mediaButtonEvent?.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)?.keyCode) {
+                    KeyEvent.KEYCODE_MEDIA_PLAY -> {
+                        mediaButtonCallback()
+                        return true
+                    }
+                    else -> false
+                }
+            }
+        })
     }
 
     private fun startNotification() {
@@ -78,7 +106,9 @@ class StreamingService : BaseService() {
                 actionIcon = R.drawable.ic_notification_buffering,
                 actionDescription = R.string.now_playing_buffering,
                 actionPendingIntent = pauseIntent,
-                tapIntent = getActivityPendingIntent(intent = NowPlayingActivity.IntentBuilder(this).build())
+                tapIntent = getActivityPendingIntent(intent = NowPlayingActivity.IntentBuilder(this).build()),
+                deleteIntent = getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_DELETE).build()),
+                mediaSessionToken = mediaSession.sessionToken
             )
         )
     }
@@ -103,6 +133,8 @@ class StreamingService : BaseService() {
             .subscribe { state ->
                 when (state.streamState) {
                     StreamingState.Paused -> {
+                        mediaButtonCallback = { radioStreamer.play() }
+
                         streamingNotificationManager.showNotification(
                             song = getString(R.string.now_playing_default_title),
                             artist = getString(R.string.now_playing_default_subtitle),
@@ -121,6 +153,8 @@ class StreamingService : BaseService() {
                             else -> Triple(R.drawable.ic_notification_buffering, R.string.now_playing_buffering, pauseIntent)
                         }
 
+                        mediaButtonCallback = { radioStreamer.pause() }
+
                         streamingNotificationManager.showNowPlayingNotification(
                             nowPlaying = state.nowPlaying,
                             defaultAlbumArt = defaultAlbumArt,
@@ -134,9 +168,17 @@ class StreamingService : BaseService() {
             .let(disposables::add)
     }
 
+    private fun tearDown() {
+        stopSelf()
+        appStateRepository.updateState(UpdateStreamState(StreamingState.NotInitialized))
+        radioStreamer.release()
+        disposables.clear()
+    }
+
     enum class Action(val value: String) {
         ACTION_PLAY("ACTION_PLAY"),
-        ACTION_PAUSE("ACTION_PAUSE")
+        ACTION_PAUSE("ACTION_PAUSE"),
+        ACTION_DELETE("ACTION_DELETE")
     }
 
     class IntentBuilder(context: Context, action: StreamingService.Action) : BaseIntentBuilder(context, StreamingService::class.java) {
