@@ -3,6 +3,7 @@ package de.developercity.arcanosradio.features.nowplaying.presentation
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings.System.CONTENT_URI
 import android.view.animation.AnimationUtils
@@ -16,8 +17,10 @@ import de.developercity.arcanosradio.core.extension.animateChangingTransitions
 import de.developercity.arcanosradio.core.extension.getMusicMaxVolume
 import de.developercity.arcanosradio.core.extension.getMusicVolume
 import de.developercity.arcanosradio.core.extension.getSystemService
+import de.developercity.arcanosradio.core.extension.gone
 import de.developercity.arcanosradio.core.extension.load
 import de.developercity.arcanosradio.core.extension.setMusicVolume
+import de.developercity.arcanosradio.core.extension.visible
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
 import de.developercity.arcanosradio.features.streaming.StreamingService
@@ -147,12 +150,27 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
         with(nowPlaying.song) {
             imageViewAlbumArt.load(albumArt, R.drawable.arcanos)
-            textViewSong.text = songName
-            textViewArtist.text = artist.artistName
+            textViewSong.text = name
+            textViewArtist.text = artist.name
             textViewLyrics.text = lyrics
-        }
 
-        setupShare(nowPlaying.song, shareUrl)
+            setupOpenInBrowser(artist.url)
+            setupShare(nowPlaying.song, shareUrl)
+        }
+    }
+
+    private fun setupOpenInBrowser(artistUrl: String) {
+        if (artistUrl.isNotEmpty()) {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(artistUrl)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            buttonOpenInBrowser.visible()
+            buttonOpenInBrowser.setOnClickListener { startActivity(intent) }
+        } else {
+            buttonOpenInBrowser.gone()
+        }
     }
 
     private fun setupShare(song: Song, shareUrl: String) {
@@ -163,8 +181,8 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
                 Intent.EXTRA_TEXT,
                 getString(
                     R.string.now_playing_share_message,
-                    song.songName,
-                    song.artist.artistName,
+                    song.name,
+                    song.artist.name,
                     shareUrl
                 )
             )

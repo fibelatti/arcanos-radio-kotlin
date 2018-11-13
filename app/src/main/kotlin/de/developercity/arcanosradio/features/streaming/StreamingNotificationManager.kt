@@ -107,8 +107,8 @@ class StreamingNotificationManager @Inject constructor(
 
                     override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {
                         showNotification(
-                            song = song.songName,
-                            artist = song.artist.artistName,
+                            song = song.name,
+                            artist = song.artist.name,
                             albumArt = defaultAlbumArt,
                             actionIcon = actionIcon,
                             actionDescription = actionDescription,
@@ -118,8 +118,8 @@ class StreamingNotificationManager @Inject constructor(
 
                     override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
                         showNotification(
-                            song = song.songName,
-                            artist = song.artist.artistName,
+                            song = song.name,
+                            artist = song.artist.name,
                             albumArt = bitmap,
                             actionIcon = actionIcon,
                             actionDescription = actionDescription,

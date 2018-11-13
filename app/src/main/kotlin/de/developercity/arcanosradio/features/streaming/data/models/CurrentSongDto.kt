@@ -9,7 +9,7 @@ data class CurrentSongDto(
 )
 
 data class CurrentSongResultDto(
-    val title: String,
+    val title: String?,
     val song: SongDto
 )
 
@@ -18,6 +18,6 @@ class CurrentSongDtoMapper @Inject constructor(
 ) : Mapper<CurrentSongDto, NowPlaying> {
 
     override fun map(param: CurrentSongDto): NowPlaying = with(param.results.first()) {
-        NowPlaying(title, songDtoMapper.map(song))
+        NowPlaying(title.orEmpty(), songDtoMapper.map(song))
     }
 }
