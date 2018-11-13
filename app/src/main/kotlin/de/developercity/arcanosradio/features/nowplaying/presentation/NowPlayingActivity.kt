@@ -22,6 +22,7 @@ import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
 import de.developercity.arcanosradio.features.streaming.StreamingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
+import de.developercity.arcanosradio.features.streaming.domain.models.Song
 import kotlinx.android.synthetic.main.activity_now_playing.*
 import javax.inject.Inject
 
@@ -143,13 +144,38 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         }
     }
 
-    override fun showSongMetadata(nowPlaying: NowPlaying) {
+    override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
         with(nowPlaying.song) {
             imageViewAlbumArt.load(albumArt, R.drawable.arcanos)
             textViewSong.text = songName
             textViewArtist.text = artist.artistName
             textViewLyrics.text = lyrics
         }
+
+        setupShare(nowPlaying.song, shareUrl)
+    }
+
+    private fun setupShare(song: Song, shareUrl: String) {
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(
+                Intent.EXTRA_TEXT,
+                getString(
+                    R.string.now_playing_share_message,
+                    song.songName,
+                    song.artist.artistName,
+                    shareUrl
+                )
+            )
+        }
+
+        val chooser = Intent.createChooser(intent, getString(R.string.now_playing_share_title))
+            .apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+        buttonShare.setOnClickListener { startActivity(chooser) }
     }
 
     class IntentBuilder(context: Context) : BaseIntentBuilder(context, NowPlayingActivity::class.java)

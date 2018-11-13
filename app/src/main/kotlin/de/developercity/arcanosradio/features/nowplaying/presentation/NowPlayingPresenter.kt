@@ -28,7 +28,7 @@ class NowPlayingPresenter @Inject constructor(
 
         fun paused()
 
-        fun showSongMetadata(nowPlaying: NowPlaying)
+        fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
     }
 
     override fun detachView() {
@@ -83,7 +83,7 @@ class NowPlayingPresenter @Inject constructor(
                         StreamingState.Paused -> view?.readyToPlay()
                     }
 
-                    appState.nowPlaying?.let { view?.showSongMetadata(it) }
+                    appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
                 },
                 { view?.handleError(it) }
             )
