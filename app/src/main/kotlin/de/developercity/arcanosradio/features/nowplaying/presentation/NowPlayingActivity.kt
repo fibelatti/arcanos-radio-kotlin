@@ -114,13 +114,13 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     }
 
     override fun buffering() {
-        setupButtonPlayControl(R.string.now_playing_buffering, R.drawable.ic_loading) {
+        setupButtonPlayControl(R.string.now_playing_buffering, R.drawable.ic_buffering) {
             nowPlayingPresenter.pause()
         }
     }
 
     override fun playing() {
-        setupButtonPlayControl(R.string.now_playing_stop, R.drawable.ic_stop) {
+        setupButtonPlayControl(R.string.now_playing_pause, R.drawable.ic_pause) {
             nowPlayingPresenter.pause()
         }
     }

@@ -84,7 +84,7 @@ class StreamingService : BaseService() {
                 song = getString(R.string.now_playing_default_title),
                 artist = getString(R.string.now_playing_default_subtitle),
                 albumArt = defaultAlbumArt,
-                actionIcon = R.drawable.ic_loading,
+                actionIcon = R.drawable.ic_notification_buffering,
                 actionDescription = R.string.now_playing_buffering,
                 actionPendingIntent = pauseIntent
             )
@@ -115,7 +115,7 @@ class StreamingService : BaseService() {
                             song = getString(R.string.now_playing_default_title),
                             artist = getString(R.string.now_playing_default_subtitle),
                             albumArt = defaultAlbumArt,
-                            actionIcon = R.drawable.ic_play,
+                            actionIcon = R.drawable.ic_notification_play,
                             actionDescription = R.string.now_playing_play,
                             actionPendingIntent = playIntent
                         )
@@ -124,9 +124,9 @@ class StreamingService : BaseService() {
                     }
                     else -> state.nowPlaying?.let {
                         val (icon, description, intent) = when (state.streamState) {
-                            StreamingState.Playing -> Triple(R.drawable.ic_stop, R.string.now_playing_stop, pauseIntent)
-                            StreamingState.Paused -> Triple(R.drawable.ic_play, R.string.now_playing_play, playIntent)
-                            else -> Triple(R.drawable.ic_loading, R.string.now_playing_buffering, pauseIntent)
+                            StreamingState.Playing -> Triple(R.drawable.ic_notification_pause, R.string.now_playing_pause, pauseIntent)
+                            StreamingState.Paused -> Triple(R.drawable.ic_notification_play, R.string.now_playing_play, playIntent)
+                            else -> Triple(R.drawable.ic_notification_buffering, R.string.now_playing_buffering, pauseIntent)
                         }
 
                         streamingNotificationManager.showNowPlayingNotification(
