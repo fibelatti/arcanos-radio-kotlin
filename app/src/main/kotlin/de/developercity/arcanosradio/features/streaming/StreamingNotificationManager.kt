@@ -50,15 +50,16 @@ class StreamingNotificationManager @Inject constructor(
         return notificationBuilder
             .setStyle(MediaStyle()
                 .setMediaSession(mediaSession.sessionToken)
-                .setShowCancelButton(true)
                 .setShowActionsInCompactView(0)
             )
             .apply { mActions.clear() }
-            .addAction(NotificationCompat.Action.Builder(
-                actionIcon,
-                resourceProvider.getString(actionDescription),
-                actionPendingIntent
-            ).build())
+            .addAction(
+                NotificationCompat.Action.Builder(
+                    actionIcon,
+                    resourceProvider.getString(actionDescription),
+                    actionPendingIntent
+                ).build()
+            )
             .setSmallIcon(R.drawable.ic_radio)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
