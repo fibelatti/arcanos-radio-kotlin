@@ -42,7 +42,8 @@ class StreamingNotificationManager @Inject constructor(
         albumArt: Bitmap,
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
-        actionPendingIntent: PendingIntent
+        actionPendingIntent: PendingIntent,
+        tapIntent: PendingIntent? = null
     ): Notification {
         createNotificationChannel()
 
@@ -61,7 +62,7 @@ class StreamingNotificationManager @Inject constructor(
             .setSmallIcon(R.drawable.ic_radio)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
-//            .setContentIntent(createContentIntent())
+            .apply { tapIntent?.let(::setContentIntent) }
             .setContentTitle(song)
             .setContentText(artist)
             .setLargeIcon(albumArt)

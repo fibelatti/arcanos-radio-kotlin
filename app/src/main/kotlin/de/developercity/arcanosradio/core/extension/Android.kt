@@ -1,6 +1,8 @@
 package de.developercity.arcanosradio.core.extension
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.os.Build
@@ -12,6 +14,7 @@ fun inOreo(body: () -> Unit) {
 }
 // endregion
 
+// region SystemService
 inline fun <reified T> Context.getSystemService(): T? =
     ContextCompat.getSystemService(this, T::class.java)
 
@@ -24,3 +27,10 @@ fun AudioManager?.setMusicVolume(volume: Int) {
 }
 
 fun AudioManager?.getMusicMaxVolume(): Int = this?.getStreamMaxVolume(AudioManager.STREAM_MUSIC).orZero()
+// endregion
+
+fun Context.getServicePendingIntent(requestCode: Int = 0, intent: Intent, flags: Int = 0): PendingIntent =
+    PendingIntent.getService(this, requestCode, intent, flags)
+
+fun Context.getActivityPendingIntent(requestCode: Int = 0, intent: Intent, flags: Int = 0): PendingIntent =
+    PendingIntent.getActivity(this, requestCode, intent, flags)

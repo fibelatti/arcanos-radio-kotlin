@@ -1,13 +1,17 @@
 package de.developercity.arcanosradio.features.streaming
 
-import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import de.developercity.arcanosradio.R
+import de.developercity.arcanosradio.core.extension.getActivityPendingIntent
+import de.developercity.arcanosradio.core.extension.getServicePendingIntent
+import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
 import de.developercity.arcanosradio.core.platform.base.BaseService
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
+import de.developercity.arcanosradio.features.nowplaying.presentation.NowPlayingActivity
 import de.developercity.arcanosradio.features.streaming.domain.StreamingRepository
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import io.reactivex.Observable
@@ -16,9 +20,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 private const val POLL_INTERVAL = 10L
-
-private const val ACTION_PLAY = "ACTION_PLAY"
-private const val ACTION_PAUSE = "ACTION_PAUSE"
 
 class StreamingService : BaseService() {
 
@@ -39,20 +40,10 @@ class StreamingService : BaseService() {
 
     // region Intent
     private val playIntent by lazy {
-        PendingIntent.getService(
-            this,
-            1,
-            Intent(this, StreamingService::class.java).apply { action = ACTION_PLAY },
-            0
-        )
+        getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_PLAY).build())
     }
     private val pauseIntent by lazy {
-        PendingIntent.getService(
-            this,
-            1,
-            Intent(this, StreamingService::class.java).apply { action = ACTION_PAUSE },
-            0
-        )
+        getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_PAUSE).build())
     }
     // endregion
 
@@ -71,9 +62,9 @@ class StreamingService : BaseService() {
     }
 
     private fun handleIntent(intent: Intent?) {
-        when (intent?.action?.toUpperCase()) {
-            ACTION_PLAY -> radioStreamer.play()
-            ACTION_PAUSE -> radioStreamer.pause()
+        when (intent?.action) {
+            Action.ACTION_PLAY.value -> radioStreamer.play()
+            Action.ACTION_PAUSE.value -> radioStreamer.pause()
         }
     }
 
@@ -86,7 +77,8 @@ class StreamingService : BaseService() {
                 albumArt = defaultAlbumArt,
                 actionIcon = R.drawable.ic_notification_buffering,
                 actionDescription = R.string.now_playing_buffering,
-                actionPendingIntent = pauseIntent
+                actionPendingIntent = pauseIntent,
+                tapIntent = getActivityPendingIntent(intent = NowPlayingActivity.IntentBuilder(this).build())
             )
         )
     }
@@ -140,5 +132,16 @@ class StreamingService : BaseService() {
                 }
             }
             .let(disposables::add)
+    }
+
+    enum class Action(val value: String) {
+        ACTION_PLAY("ACTION_PLAY"),
+        ACTION_PAUSE("ACTION_PAUSE")
+    }
+
+    class IntentBuilder(context: Context, action: StreamingService.Action) : BaseIntentBuilder(context, StreamingService::class.java) {
+        init {
+            intent.action = action.value
+        }
     }
 }
