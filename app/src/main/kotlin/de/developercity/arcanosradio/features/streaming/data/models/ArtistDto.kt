@@ -5,12 +5,12 @@ import de.developercity.arcanosradio.features.streaming.domain.models.Artist
 import javax.inject.Inject
 
 data class ArtistDto(
-    val artistName: String,
-    val url: String
+    val artistName: String?,
+    val url: String?
 )
 
 class ArtistDtoMapper @Inject constructor() : Mapper<ArtistDto, Artist> {
     override fun map(param: ArtistDto): Artist = with(param) {
-        Artist(artistName, url)
+        Artist(artistName.orEmpty(), url.orEmpty())
     }
 }

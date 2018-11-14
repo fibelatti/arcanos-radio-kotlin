@@ -18,17 +18,25 @@
 
     <!-- Now Playing -->
     <string name="now_playing_default_title">Arcanos Web Rock</string>
+    <string name="now_playing_default_subtitle">The radio for those who live rock!</string>
 
     <string name="now_playing_album_art">Album art</string>
 
     <string name="now_playing_play">Play</string>
-    <string name="now_playing_stop">Stop</string>
+    <string name="now_playing_pause">Pause</string>
     <string name="now_playing_buffering">Buffering</string>
     <string name="now_playing_volume">Volume</string>
 
-    <string name="now_playing_show_lyrics">Show lyrics</string>
-    <string name="now_playing_hide_lyrics">Hide lyrics</string>
+    <string name="now_playing_show_lyrics">Lyrics</string>
+    <string name="now_playing_hide_lyrics">Hide</string>
+
+    <string name="now_playing_see_website">See artist website</string>
 
     <string name="now_playing_share">Share</string>
-    <string name="now_playing_see_website">See artist website</string>
+    <string name="now_playing_share_title">Share Arcanos Web Rock</string>
+    <string name="now_playing_share_message">I\'m listening to %1$s from %2$s on Arcanos Web Rock! Get the app at %3$s - www.arcanosmc.com.br #ArcanosWebRock</string>
+
+    <!-- Now Playing Notification -->
+    <string name="now_playing_notification_channel_name">Radio Streaming</string>
+    <string name="now_playing_notification_channel_description">Radio playback controls</string>
 </resources>

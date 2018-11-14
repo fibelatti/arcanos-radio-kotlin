@@ -26,7 +26,7 @@
         style="@style/AppTheme.ExtendedFab"
         android:layout_marginBottom="@dimen/margin_regular"
         android:text="@string/now_playing_buffering"
-        app:icon="@drawable/ic_loading"
+        app:icon="@drawable/ic_buffering"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAlbumArt"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

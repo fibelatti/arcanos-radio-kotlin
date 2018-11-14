@@ -28,7 +28,7 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         style="@style/AppTheme.ExtendedFab"
         android:layout_marginLeft="@dimen/margin_regular"
         android:text="@string/now_playing_buffering"
-        app:icon="@drawable/ic_loading"
+        app:icon="@drawable/ic_buffering"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAlbumArt"
         app:layout_constraintLeft_toRightOf="@+id/imageViewAlbumArt"
         app:layout_constraintRight_toRightOf="parent" />
