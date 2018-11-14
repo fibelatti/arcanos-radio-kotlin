@@ -6,7 +6,7 @@ import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
-import de.developercity.arcanosradio.features.streaming.RadioStreamer
+import de.developercity.arcanosradio.features.streaming.device.RadioStreamer
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import javax.inject.Inject

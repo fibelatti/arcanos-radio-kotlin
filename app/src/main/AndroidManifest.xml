@@ -42,7 +42,7 @@
 
         <!-- SERVICE -->
         <service
-            android:name=".features.streaming.StreamingService"
+            android:name=".features.streaming.device.StreamingService"
             android:exported="false" />
 
         <!-- RECEIVER -->

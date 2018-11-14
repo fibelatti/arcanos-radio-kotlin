@@ -1,4 +1,4 @@
-package de.developercity.arcanosradio.features.streaming
+package de.developercity.arcanosradio.features.streaming.device
 
 import android.content.Context
 import android.content.Intent
@@ -47,10 +47,10 @@ class StreamingService : BaseService() {
 
     // region Intent
     private val playIntent by lazy {
-        getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_PLAY).build())
+        getServicePendingIntent(intent = IntentBuilder(this, Action.ACTION_PLAY).build())
     }
     private val pauseIntent by lazy {
-        getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_PAUSE).build())
+        getServicePendingIntent(intent = IntentBuilder(this, Action.ACTION_PAUSE).build())
     }
     // endregion
 
@@ -107,7 +107,7 @@ class StreamingService : BaseService() {
                 actionDescription = R.string.now_playing_buffering,
                 actionPendingIntent = pauseIntent,
                 tapIntent = getActivityPendingIntent(intent = NowPlayingActivity.IntentBuilder(this).build()),
-                deleteIntent = getServicePendingIntent(intent = StreamingService.IntentBuilder(this, Action.ACTION_DELETE).build()),
+                deleteIntent = getServicePendingIntent(intent = IntentBuilder(this, Action.ACTION_DELETE).build()),
                 mediaSessionToken = mediaSession.sessionToken
             )
         )
@@ -181,7 +181,7 @@ class StreamingService : BaseService() {
         ACTION_DELETE("ACTION_DELETE")
     }
 
-    class IntentBuilder(context: Context, action: StreamingService.Action) : BaseIntentBuilder(context, StreamingService::class.java) {
+    class IntentBuilder(context: Context, action: Action) : BaseIntentBuilder(context, StreamingService::class.java) {
         init {
             intent.action = action.value
         }

@@ -1,4 +1,4 @@
-package de.developercity.arcanosradio.features.streaming
+package de.developercity.arcanosradio.features.streaming.device
 
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_MUSIC

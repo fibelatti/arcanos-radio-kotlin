@@ -1,4 +1,4 @@
-package de.developercity.arcanosradio.features.streaming
+package de.developercity.arcanosradio.features.streaming.device
 
 import android.database.ContentObserver
 import android.media.AudioManager

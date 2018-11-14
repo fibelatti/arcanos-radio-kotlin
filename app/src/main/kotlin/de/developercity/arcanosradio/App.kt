@@ -12,7 +12,7 @@ import de.developercity.arcanosradio.core.di.DaggerAppComponent
 import de.developercity.arcanosradio.core.extension.getSystemService
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNetworkAvailable
-import de.developercity.arcanosradio.features.streaming.VolumeObserver
+import de.developercity.arcanosradio.features.streaming.device.VolumeObserver
 import javax.inject.Inject
 
 class App : Application() {

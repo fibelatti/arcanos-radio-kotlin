@@ -1,4 +1,4 @@
-package de.developercity.arcanosradio.features.streaming
+package de.developercity.arcanosradio.features.streaming.device
 
 import android.app.Notification
 import android.app.NotificationChannel

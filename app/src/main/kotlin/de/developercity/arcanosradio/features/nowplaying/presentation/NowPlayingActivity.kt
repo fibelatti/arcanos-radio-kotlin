@@ -22,7 +22,7 @@ import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.extension.visible
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
-import de.developercity.arcanosradio.features.streaming.StreamingService
+import de.developercity.arcanosradio.features.streaming.device.StreamingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import de.developercity.arcanosradio.features.streaming.domain.models.Song
 import kotlinx.android.synthetic.main.activity_now_playing.*
