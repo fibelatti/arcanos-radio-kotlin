@@ -5,7 +5,6 @@ import android.content.Intent
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings.System.CONTENT_URI
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import androidx.annotation.DrawableRes
@@ -34,7 +33,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     @Inject
     lateinit var nowPlayingPresenter: NowPlayingPresenter
 
-    private val volumeObserver by lazy { VolumeObserver(this@NowPlayingActivity) }
     private val defaultConstraintSet = ConstraintSet()
     private var lyricsVisible = false
 
@@ -61,12 +59,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
 
     private fun setupVolumeControls() {
         val audioManager = getSystemService<AudioManager>()
-
-        contentResolver.registerContentObserver(CONTENT_URI, true, volumeObserver)
-        volumeObserver.onVolumeChanged = {
-            nowPlayingPresenter.setVolume(it.toFloat())
-            seekVolume.progress = it
-        }
 
         seekVolume.run {
             max = audioManager.getMusicMaxVolume()
@@ -103,8 +95,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     override fun onDestroy() {
         super.onDestroy()
         nowPlayingPresenter.detachView()
-        volumeObserver.onVolumeChanged = null
-        contentResolver.unregisterContentObserver(volumeObserver)
     }
 
     override fun streamerReady() {
@@ -156,6 +146,10 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
             setupOpenInBrowser(artist.url)
             setupShare(nowPlaying.song, shareUrl)
         }
+    }
+
+    override fun updateVolumeSeeker(volume: Int) {
+        seekVolume.progress = volume
     }
 
     private fun setupOpenInBrowser(artistUrl: String) {

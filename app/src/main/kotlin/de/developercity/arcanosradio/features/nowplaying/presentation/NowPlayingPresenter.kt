@@ -27,6 +27,8 @@ class NowPlayingPresenter @Inject constructor(
         fun playing()
 
         fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
+
+        fun updateVolumeSeeker(volume: Int)
     }
 
     fun setup() {
@@ -41,10 +43,6 @@ class NowPlayingPresenter @Inject constructor(
 
     fun pause() {
         radioStreamer.pause()
-    }
-
-    fun setVolume(volume: Float) {
-        radioStreamer.setVolume(volume)
     }
 
     private fun observeAppState() {
@@ -71,6 +69,8 @@ class NowPlayingPresenter @Inject constructor(
                         }
                         StreamingState.Paused -> view?.readyToPlay()
                     }
+
+                    view?.updateVolumeSeeker(appState.streamVolume)
 
                     if (!appState.networkAvailable) {
                         radioStreamer.interrupt()

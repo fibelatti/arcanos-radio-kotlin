@@ -9,6 +9,8 @@ class UpdateStreamingConfig(val shareUrl: String, val StreamingUrl: String) : Up
 
 class UpdateStreamState(val streamState: StreamingState) : UpdateStateAction()
 
+class UpdateStreamVolume(val volume: Int) : UpdateStateAction()
+
 class UpdateNowPlaying(val nowPlaying: NowPlaying) : UpdateStateAction()
 
 class UpdateNetworkAvailable(val available: Boolean) : UpdateStateAction()

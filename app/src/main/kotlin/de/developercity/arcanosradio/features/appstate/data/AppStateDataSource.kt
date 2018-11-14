@@ -9,6 +9,7 @@ import de.developercity.arcanosradio.features.appstate.domain.UpdateNetworkAvail
 import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStateAction
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
+import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamVolume
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamingConfig
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -37,6 +38,7 @@ class AppStateDataSource @Inject constructor(
                 streamingUrl = updateStateAction.StreamingUrl
             )
             is UpdateStreamState -> state.copy(streamState = updateStateAction.streamState)
+            is UpdateStreamVolume -> state.copy(streamVolume = updateStateAction.volume)
             is UpdateNowPlaying -> state.copy(nowPlaying = updateStateAction.nowPlaying)
             is UpdateNetworkAvailable -> state.copy(networkAvailable = updateStateAction.available)
         }
