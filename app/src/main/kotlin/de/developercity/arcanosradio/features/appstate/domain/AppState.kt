@@ -7,6 +7,7 @@ data class AppState(
     val shareUrl: String = "",
     val streamingUrl: String = "",
     val streamState: StreamingState = StreamingState.NotInitialized,
+    val streamVolume: Int = 0,
     val nowPlaying: NowPlaying? = null,
     val networkAvailable: Boolean = false
 )

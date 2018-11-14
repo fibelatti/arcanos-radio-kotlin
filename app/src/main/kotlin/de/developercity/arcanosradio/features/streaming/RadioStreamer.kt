@@ -5,16 +5,19 @@ import android.media.AudioAttributes.CONTENT_TYPE_MUSIC
 import android.media.AudioManager
 import android.media.MediaPlayer
 import de.developercity.arcanosradio.core.extension.getMusicVolume
+import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RadioStreamer @Inject constructor(
     private val audioManager: AudioManager?,
-    private val appStateRepository: AppStateRepository
+    private val appStateRepository: AppStateRepository,
+    private val schedulerProvider: SchedulerProvider
 ) {
 
     private val mediaPlayer by lazy {
@@ -30,7 +33,10 @@ class RadioStreamer @Inject constructor(
         }
     }
 
+    private val disposables = CompositeDisposable()
+
     fun setup(streamingUrl: String) {
+        observeAppState()
         mediaPlayer.run {
             setDataSource(streamingUrl)
             prepareAsync()
@@ -58,13 +64,23 @@ class RadioStreamer @Inject constructor(
             reset()
             release()
         }
-    }
-
-    fun setVolume(volume: Float) {
-        mediaPlayer.setVolume(volume, volume)
+        disposables.clear()
     }
 
     private fun updateAppState(streamingState: StreamingState) {
         appStateRepository.updateState(UpdateStreamState(streamingState))
+    }
+
+    private fun observeAppState() {
+        appStateRepository.getAppState()
+            .subscribeOn(schedulerProvider.io())
+            .subscribe { state ->
+                mediaPlayer.setVolume(state.streamVolume)
+            }
+            .let(disposables::add)
+    }
+
+    private fun MediaPlayer.setVolume(volume: Int) {
+        setVolume(volume.toFloat(), volume.toFloat())
     }
 }
