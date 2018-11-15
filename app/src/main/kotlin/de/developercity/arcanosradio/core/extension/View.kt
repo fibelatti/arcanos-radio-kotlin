@@ -14,10 +14,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
-import com.squareup.picasso.Picasso
 import de.developercity.arcanosradio.R
 import de.developercity.arcanosradio.core.platform.recyclerview.ItemOffsetDecoration
 
@@ -143,17 +140,6 @@ fun RecyclerView.withGridLayoutManager(spanCount: Int): RecyclerView = apply {
 
 fun RecyclerView.withLinearLayoutManager(): RecyclerView = apply {
     layoutManager = LinearLayoutManager(context)
-}
-
-fun ImageView.load(url: String, @DrawableRes placeholder: Int = -1) {
-    Picasso.get().load(url)
-        .apply {
-            if (placeholder != -1) {
-                placeholder(placeholder)
-                error(placeholder)
-            }
-        }
-        .into(this)
 }
 // endregion
 

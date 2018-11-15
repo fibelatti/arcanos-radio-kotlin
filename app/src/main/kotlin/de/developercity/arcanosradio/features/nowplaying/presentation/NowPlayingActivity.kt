@@ -17,6 +17,7 @@ import de.developercity.arcanosradio.core.extension.getMusicMaxVolume
 import de.developercity.arcanosradio.core.extension.getMusicVolume
 import de.developercity.arcanosradio.core.extension.getSystemService
 import de.developercity.arcanosradio.core.extension.gone
+import de.developercity.arcanosradio.core.extension.isVisible
 import de.developercity.arcanosradio.core.extension.load
 import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.extension.visible
@@ -34,7 +35,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     lateinit var nowPlayingPresenter: NowPlayingPresenter
 
     private val defaultConstraintSet = ConstraintSet()
-    private var lyricsVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +42,8 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         setupLayout()
 
         injector.inject(this)
+
+        startStreamingService()
 
         nowPlayingPresenter.attachView(this)
         nowPlayingPresenter.setup()
@@ -77,7 +79,7 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     }
 
     private fun toggleLyrics() {
-        val constraintSet = if (lyricsVisible) {
+        val constraintSet = if (layoutLyrics.isVisible()) {
             defaultConstraintSet
         } else {
             ConstraintSet().apply {
@@ -86,29 +88,12 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         }
 
         constraintSet.applyTo(layoutRoot)
-
-        lyricsVisible = !lyricsVisible
-
-        buttonLyrics.setText(if (lyricsVisible) R.string.now_playing_hide_lyrics else R.string.now_playing_show_lyrics)
+        buttonLyrics.setText(if (layoutLyrics.isVisible()) R.string.now_playing_hide_lyrics else R.string.now_playing_show_lyrics)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         nowPlayingPresenter.detachView()
-    }
-
-    override fun streamerReady() {
-        ContextCompat.startForegroundService(this, Intent(this, StreamingService::class.java))
-    }
-
-    override fun readyToPlay() {
-        imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
-        setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
-            nowPlayingPresenter.play()
-        }
-        textViewSong.setText(R.string.now_playing_default_title)
-        textViewArtist.setText(R.string.now_playing_default_subtitle)
-        buttonLyrics.gone()
     }
 
     override fun buffering() {
@@ -135,6 +120,25 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         }
     }
 
+    override fun idle() {
+        defaultConstraintSet.applyTo(layoutRoot)
+        imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
+        setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
+            nowPlayingPresenter.play()
+            startStreamingService()
+        }
+        textViewSong.setText(R.string.now_playing_default_title)
+        textViewArtist.setText(R.string.now_playing_default_subtitle)
+        buttonLyrics.setText(R.string.now_playing_show_lyrics)
+        buttonLyrics.gone()
+        buttonOpenInBrowser.gone()
+        buttonShare.gone()
+    }
+
+    override fun showNetworkNotAvailable() {
+        // TODO
+    }
+
     override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
         with(nowPlaying.song) {
             imageViewAlbumArt.load(albumArt, R.drawable.arcanos)
@@ -142,7 +146,6 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
             textViewArtist.text = artist.name
             textViewLyrics.text = lyrics
             buttonLyrics.visible()
-
             setupOpenInBrowser(artist.url)
             setupShare(nowPlaying.song, shareUrl)
         }
@@ -186,7 +189,12 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
+        buttonShare.visible()
         buttonShare.setOnClickListener { startActivity(chooser) }
+    }
+
+    private fun startStreamingService() {
+        ContextCompat.startForegroundService(this, StreamingService.IntentBuilder(this).build())
     }
 
     class IntentBuilder(context: Context) : BaseIntentBuilder(context, NowPlayingActivity::class.java)

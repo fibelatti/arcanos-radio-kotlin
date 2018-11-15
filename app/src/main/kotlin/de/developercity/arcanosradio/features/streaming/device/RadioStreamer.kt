@@ -2,85 +2,100 @@ package de.developercity.arcanosradio.features.streaming.device
 
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_MUSIC
-import android.media.AudioManager
 import android.media.MediaPlayer
-import de.developercity.arcanosradio.core.extension.getMusicVolume
-import de.developercity.arcanosradio.core.provider.SchedulerProvider
+import de.developercity.arcanosradio.features.appstate.domain.AppState
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
+import de.developercity.arcanosradio.features.appstate.domain.DefaultAppStateObserver
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
+import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RadioStreamer @Inject constructor(
-    private val audioManager: AudioManager?,
-    private val appStateRepository: AppStateRepository,
-    private val schedulerProvider: SchedulerProvider
+    private val appStateRepository: AppStateRepository
 ) {
 
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
-            val volume = audioManager.getMusicVolume().toFloat()
-
-            setVolume(volume, volume)
             setAudioAttributes(AudioAttributes.Builder().setContentType(CONTENT_TYPE_MUSIC).build())
             setOnPreparedListener {
-                it.start()
-                updateAppState(StreamingState.Playing)
+                if (shouldStopAsync) {
+                    it.stop()
+                } else {
+                    it.start()
+                    appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Playing))
+                }
             }
         }
     }
 
     private val disposables = CompositeDisposable()
 
-    fun setup(streamingUrl: String) {
-        observeAppState()
-        mediaPlayer.run {
-            setDataSource(streamingUrl)
-            prepareAsync()
-        }
-        updateAppState(StreamingState.Buffering)
-    }
+    private var shouldStopAsync: Boolean = false
 
-    fun play() {
-        mediaPlayer.prepareAsync()
-        updateAppState(StreamingState.Buffering)
-    }
-
-    fun pause() {
-        mediaPlayer.stop()
-        updateAppState(StreamingState.Paused)
-    }
-
-    fun interrupt() {
-        mediaPlayer.stop()
-        updateAppState(StreamingState.Interrupted)
-    }
-
-    fun release() {
-        mediaPlayer.run {
-            reset()
-            release()
-        }
-        disposables.clear()
-    }
-
-    private fun updateAppState(streamingState: StreamingState) {
-        appStateRepository.updateState(UpdateStreamState(streamingState))
-    }
-
-    private fun observeAppState() {
-        appStateRepository.getAppState()
-            .subscribeOn(schedulerProvider.io())
-            .subscribe { state ->
-                mediaPlayer.setVolume(state.streamVolume)
+    fun setup() {
+        appStateRepository.addSideEffect(object : Observer<AppState> by DefaultAppStateObserver {
+            override fun onSubscribe(disposable: Disposable) {
+                disposables.add(disposable)
             }
-            .let(disposables::add)
+
+            override fun onNext(state: AppState) {
+                when (state.streamState) {
+                    is StreamingState.NotInitialized,
+                    is StreamingState.ShouldStart,
+                    is StreamingState.Interrupted -> {
+                        if (state.streamingUrl.isNotEmpty() && state.networkAvailable) {
+                            mediaPlayer.tryToPrepareAsync(state.streamingUrl)
+                            appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Buffering))
+                        }
+                    }
+                    is StreamingState.Buffering,
+                    is StreamingState.Playing -> {
+                        if (!state.networkAvailable) {
+                            mediaPlayer.tryToStop()
+                            appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Interrupted))
+                        }
+                    }
+                    is StreamingState.ShouldPause -> {
+                        mediaPlayer.tryToStop()
+                        appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Paused))
+                    }
+                    is StreamingState.ShouldTerminate -> {
+                        disposables.clear()
+                        mediaPlayer.release()
+                        appStateRepository.dispatchAction(UpdateStreamState(StreamingState.NotInitialized))
+                    }
+                }
+
+                if (state.streamState is StreamingState.Playing) mediaPlayer.setVolume(state.streamVolume)
+            }
+        })
     }
 
     private fun MediaPlayer.setVolume(volume: Int) {
         setVolume(volume.toFloat(), volume.toFloat())
+    }
+
+    private fun MediaPlayer.tryToPrepareAsync(streamingUrl: String) {
+        try {
+            shouldStopAsync = false
+            setDataSource(streamingUrl)
+            prepareAsync()
+            appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Buffering))
+        } catch (ignore: IllegalStateException) {
+        }
+    }
+
+    private fun MediaPlayer.tryToStop() {
+        try {
+            pause()
+            reset()
+        } catch (ignore: IllegalStateException) {
+            shouldStopAsync = true
+        }
     }
 }

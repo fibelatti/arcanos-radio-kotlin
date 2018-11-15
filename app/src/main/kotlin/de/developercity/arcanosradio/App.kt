@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatDelegate
 import com.facebook.stetho.Stetho
 import de.developercity.arcanosradio.core.di.AppComponent
 import de.developercity.arcanosradio.core.di.DaggerAppComponent
@@ -30,11 +29,10 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         appComponent.inject(this)
 
         registerNetworkCallback()
-        contentResolver.registerContentObserver(Settings.System.CONTENT_URI, true, volumeObserver)
+        registerVolumeCallback()
 
         if (BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
     }
@@ -44,13 +42,17 @@ class App : Application() {
             NetworkRequest.Builder().build(),
             object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
-                    appStateRepository.updateState(UpdateNetworkAvailable(available = true))
+                    appStateRepository.dispatchAction(UpdateNetworkAvailable(available = true))
                 }
 
                 override fun onLost(network: Network) {
-                    appStateRepository.updateState(UpdateNetworkAvailable(available = false))
+                    appStateRepository.dispatchAction(UpdateNetworkAvailable(available = false))
                 }
             }
         )
+    }
+
+    private fun registerVolumeCallback() {
+        contentResolver.registerContentObserver(Settings.System.CONTENT_URI, true, volumeObserver)
     }
 }
