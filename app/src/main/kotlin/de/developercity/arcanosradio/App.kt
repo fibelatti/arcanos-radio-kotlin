@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatDelegate
 import com.facebook.stetho.Stetho
 import de.developercity.arcanosradio.core.di.AppComponent
 import de.developercity.arcanosradio.core.di.DaggerAppComponent
@@ -30,7 +29,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         appComponent.inject(this)
 
         registerNetworkCallback()
