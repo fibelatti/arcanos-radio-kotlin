@@ -18,13 +18,9 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import de.developercity.arcanosradio.R
-import de.developercity.arcanosradio.core.platform.recyclerview.ItemOffsetDecoration
 
 @JvmOverloads
 fun ViewGroup.inflate(@LayoutRes layoutResource: Int, attachToRoot: Boolean = false): View =
@@ -128,18 +124,6 @@ fun View.heightWrapContent() {
 
     layoutParams = params
     requestLayout()
-}
-
-fun RecyclerView.withDefaultDecoration(): RecyclerView = apply {
-    addItemDecoration(ItemOffsetDecoration(context, R.dimen.margin_small))
-}
-
-fun RecyclerView.withGridLayoutManager(spanCount: Int): RecyclerView = apply {
-    layoutManager = GridLayoutManager(context, spanCount)
-}
-
-fun RecyclerView.withLinearLayoutManager(): RecyclerView = apply {
-    layoutManager = LinearLayoutManager(context)
 }
 // endregion
 
