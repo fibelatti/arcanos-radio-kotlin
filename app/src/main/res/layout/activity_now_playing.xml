@@ -61,9 +61,11 @@
         style="@style/AppTheme.ButtonPrimary.Small"
         android:layout_marginTop="@dimen/margin_regular"
         android:text="@string/now_playing_show_lyrics"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewArtist" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewArtist"
+        tools:visibility="visible" />
 
     <ScrollView
         android:id="@+id/layoutLyrics"
