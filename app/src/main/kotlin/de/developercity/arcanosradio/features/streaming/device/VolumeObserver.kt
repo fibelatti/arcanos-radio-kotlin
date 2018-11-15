@@ -14,8 +14,10 @@ class VolumeObserver @Inject constructor(
 ) : ContentObserver(Handler()) {
 
     override fun onChange(selfChange: Boolean) {
-        appStateRepository.updateState(
-            UpdateStreamVolume(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC).orZero())
-        )
+        if (!selfChange) {
+            appStateRepository.dispatchAction(
+                UpdateStreamVolume(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC).orZero())
+            )
+        }
     }
 }

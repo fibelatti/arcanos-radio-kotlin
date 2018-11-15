@@ -24,7 +24,7 @@ class SplashPresenter @Inject constructor(
             .observeOn(schedulerProvider.main())
             .subscribe(
                 {
-                    appStateRepository.updateState(
+                    appStateRepository.dispatchAction(
                         UpdateStreamingConfig(shareUrl = it.shareUrl, StreamingUrl = it.streamingUrl)
                     )
                     view?.ready()

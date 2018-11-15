@@ -6,19 +6,16 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import de.developercity.arcanosradio.R
 import de.developercity.arcanosradio.core.extension.getSystemService
 import de.developercity.arcanosradio.core.extension.inOreo
+import de.developercity.arcanosradio.core.extension.loadImageWithFallback
 import de.developercity.arcanosradio.core.provider.ResourceProvider
-import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import javax.inject.Inject
 
 private const val CHANNEL_ID = "arcanos_media_playback_channel"
@@ -75,63 +72,31 @@ class StreamingNotificationManager @Inject constructor(
             .build()
     }
 
-    fun showNotification(
+    fun showNowPlayingNotification(
         song: String,
         artist: String,
-        albumArt: Bitmap,
-        @DrawableRes actionIcon: Int,
-        @StringRes actionDescription: Int,
-        actionPendingIntent: PendingIntent
-    ) {
-        notificationManager?.notify(
-            NOTIFICATION_ID,
-            createNotification(
-                song = song,
-                artist = artist,
-                albumArt = albumArt,
-                actionIcon = actionIcon,
-                actionDescription = actionDescription,
-                actionPendingIntent = actionPendingIntent
-            )
-        )
-    }
-
-    fun showNowPlayingNotification(
-        nowPlaying: NowPlaying,
+        albumArtUrl: String?,
         defaultAlbumArt: Bitmap,
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
         actionPendingIntent: PendingIntent
     ) {
-        with(nowPlaying) {
-            Picasso.get().load(song.albumArt)
-                .placeholder(R.drawable.arcanos)
-                .into(object : Target {
-                    override fun onPrepareLoad(placeHolderDrawable: Drawable) {
-                    }
-
-                    override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {
-                        showNotification(
-                            song = song.name,
-                            artist = song.artist.name,
-                            albumArt = defaultAlbumArt,
-                            actionIcon = actionIcon,
-                            actionDescription = actionDescription,
-                            actionPendingIntent = actionPendingIntent
-                        )
-                    }
-
-                    override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
-                        showNotification(
-                            song = song.name,
-                            artist = song.artist.name,
-                            albumArt = bitmap,
-                            actionIcon = actionIcon,
-                            actionDescription = actionDescription,
-                            actionPendingIntent = actionPendingIntent
-                        )
-                    }
-                })
+        loadImageWithFallback(
+            url = albumArtUrl,
+            fallbackImage = defaultAlbumArt,
+            placeholder = R.drawable.arcanos
+        ) { loadedAlbumArt ->
+            notificationManager?.notify(
+                NOTIFICATION_ID,
+                createNotification(
+                    song = song,
+                    artist = artist,
+                    albumArt = loadedAlbumArt,
+                    actionIcon = actionIcon,
+                    actionDescription = actionDescription,
+                    actionPendingIntent = actionPendingIntent
+                )
+            )
         }
     }
 
@@ -144,8 +109,8 @@ class StreamingNotificationManager @Inject constructor(
                     NotificationManager.IMPORTANCE_LOW
                 ).apply {
                     description = resourceProvider.getString(R.string.now_playing_notification_channel_description)
-                    setShowBadge(false)
                     lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                    setShowBadge(false)
                 }
             )
         }
