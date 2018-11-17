@@ -16,9 +16,11 @@ import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamVolume
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamingConfig
 import de.developercity.arcanosradio.features.streaming.domain.NetworkState
+import de.developercity.arcanosradio.features.streaming.domain.NetworkType
+import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,21 +33,25 @@ class AppStateDataSource @Inject constructor(
 ) : AppStateRepository {
 
     private var state = AppState(
+        streamState = if (getNetworkState() is NetworkState.NotConnected) {
+            StreamingState.Interrupted
+        } else {
+            StreamingState.NotInitialized
+        },
         streamVolume = audioManager.getMusicVolume(),
         networkState = getNetworkState()
     )
-    private val observableState: BehaviorSubject<AppState> = BehaviorSubject.create()
-    private val sideEffects: BehaviorSubject<AppState> = BehaviorSubject.create()
+    private val observableState: PublishSubject<AppState> = PublishSubject.create()
+    private val sideEffects: PublishSubject<AppState> = PublishSubject.create()
     private val observableSideEffects: Observable<AppState> = sideEffects.distinctUntilChanged()
 
     override fun getAppState(): Observable<AppState> = observableState.distinctUntilChanged()
 
     @Synchronized
     override fun dispatchAction(updateStateAction: UpdateStateAction) {
-        state = updateState(updateStateAction).also {
-            observableState.onNext(it)
-            sideEffects.onNext(it)
-        }
+        state = updateState(updateStateAction)
+        observableState.onNext(state)
+        sideEffects.onNext(state)
     }
 
     override fun addSideEffect(observer: Observer<AppState>) {
@@ -60,14 +66,17 @@ class AppStateDataSource @Inject constructor(
         is UpdateStreamState -> state.copy(streamState = updateStateAction.streamState)
         is UpdateStreamVolume -> state.copy(streamVolume = updateStateAction.volume)
         is UpdateNowPlaying -> state.copy(nowPlaying = updateStateAction.nowPlaying)
-        is UpdateNetworkState -> state.copy(networkState = getNetworkState())
+        is UpdateNetworkState -> state.copy(networkState = getNetworkState(updateStateAction.networkType))
     }
 
-    private fun getNetworkState(): NetworkState {
+    private fun getNetworkState(networkType: NetworkType? = null): NetworkState {
         return when {
-            connectivityManager.isConnectedToWifi() -> NetworkState.Connected
-            connectivityManager.isConnected() &&
-                currentInstallSharedPreferences.getStreamingOverMobileEnabled() -> NetworkState.Connected
+            networkType is NetworkType.Wifi ||
+                (networkType is NetworkType.MobileData && currentInstallSharedPreferences.getStreamingOverMobileDataEnabled()) ||
+                connectivityManager.isConnectedToWifi() ||
+                (connectivityManager.isConnected() && currentInstallSharedPreferences.getStreamingOverMobileDataEnabled()) -> {
+                NetworkState.Connected
+            }
             else -> NetworkState.NotConnected
         }
     }

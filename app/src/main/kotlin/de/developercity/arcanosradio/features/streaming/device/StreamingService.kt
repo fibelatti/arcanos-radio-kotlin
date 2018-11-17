@@ -56,6 +56,9 @@ class StreamingService : BaseService() {
     private val pauseIntent by lazy {
         getServicePendingIntent(intent = IntentBuilder(this, Action.ACTION_PAUSE).build())
     }
+    private val noNetworkIntent by lazy {
+        getServicePendingIntent(intent = IntentBuilder(this).build())
+    }
     // endregion
 
     private var mediaButtonCallback: () -> Unit = {}
@@ -153,7 +156,17 @@ class StreamingService : BaseService() {
                         stopForeground(false)
                     }
                     StreamingState.Interrupted -> {
-                        // TODO
+                        mediaButtonCallback = {}
+
+                        streamingNotificationManager.showNowPlayingNotification(
+                            song = defaultTitle,
+                            artist = getString(R.string.error_network),
+                            defaultAlbumArt = defaultAlbumArt,
+                            actionIcon = R.drawable.ic_no_connection,
+                            actionDescription = R.string.error_network,
+                            actionPendingIntent = noNetworkIntent
+                        )
+                        stopForeground(false)
                     }
                     StreamingState.ShouldTerminate -> {
                         disposables.dispose()
@@ -189,7 +202,7 @@ class StreamingService : BaseService() {
 
     class IntentBuilder(context: Context, action: Action? = null) : BaseIntentBuilder(context, StreamingService::class.java) {
         init {
-            action?.let { intent.action = it.value }
+            intent.action = action?.value
         }
     }
 }

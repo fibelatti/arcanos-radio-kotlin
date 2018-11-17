@@ -23,13 +23,18 @@ import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.extension.visible
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
+import de.developercity.arcanosradio.features.preferences.PreferencesManager
+import de.developercity.arcanosradio.features.preferences.PreferencesManagerDelegate
 import de.developercity.arcanosradio.features.streaming.device.StreamingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import de.developercity.arcanosradio.features.streaming.domain.models.Song
 import kotlinx.android.synthetic.main.activity_now_playing.*
 import javax.inject.Inject
 
-class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
+class NowPlayingActivity :
+    BaseActivity(),
+    NowPlayingPresenter.View,
+    PreferencesManager by PreferencesManagerDelegate() {
 
     @Inject
     lateinit var nowPlayingPresenter: NowPlayingPresenter
@@ -57,6 +62,11 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         buttonPlayControl.startAnimation(AnimationUtils.loadAnimation(this, R.anim.expand))
         buttonLyrics.setOnClickListener { toggleLyrics() }
         setupVolumeControls()
+        buttonPreferences.setOnClickListener {
+            showPreferencesManager(this) { streamingOverMobileEnabled ->
+                nowPlayingPresenter.setStreamingOverMobileDataEnabled(streamingOverMobileEnabled)
+            }
+        }
     }
 
     private fun setupVolumeControls() {
@@ -136,7 +146,15 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
     }
 
     override fun showNetworkNotAvailable() {
-        // TODO
+        defaultConstraintSet.applyTo(layoutRoot)
+        imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
+        setupButtonPlayControl(R.string.now_playing_no_connection, R.drawable.ic_no_connection) {}
+        textViewSong.setText(R.string.now_playing_default_title)
+        textViewArtist.setText(R.string.error_network)
+        buttonLyrics.setText(R.string.now_playing_show_lyrics)
+        buttonLyrics.gone()
+        buttonOpenInBrowser.gone()
+        buttonShare.gone()
     }
 
     override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {

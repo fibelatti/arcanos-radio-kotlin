@@ -120,7 +120,17 @@
         android:tint="@color/color_accent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/buttonOpenInBrowser"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/buttonPreferences"
         app:srcCompat="@drawable/ic_share" />
+
+    <ImageView
+        android:id="@+id/buttonPreferences"
+        style="@style/AppTheme.ClickableIcon"
+        android:contentDescription="@string/now_playing_preferences"
+        android:tint="@color/color_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/buttonShare"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_preferences" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

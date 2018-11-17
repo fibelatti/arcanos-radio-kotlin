@@ -1,5 +1,6 @@
 package de.developercity.arcanosradio.features.nowplaying.presentation
 
+import de.developercity.arcanosradio.core.persistence.CurrentInstallSharedPreferences
 import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 class NowPlayingPresenter @Inject constructor(
     schedulerProvider: SchedulerProvider,
-    private val appStateRepository: AppStateRepository
+    private val appStateRepository: AppStateRepository,
+    private val currentInstallSharedPreferences: CurrentInstallSharedPreferences
 ) : BasePresenter<NowPlayingPresenter.View>(schedulerProvider) {
 
     interface View : BaseContract.View {
@@ -58,5 +60,9 @@ class NowPlayingPresenter @Inject constructor(
 
     fun pause() {
         appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause))
+    }
+
+    fun setStreamingOverMobileDataEnabled(value: Boolean) {
+        currentInstallSharedPreferences.setStreamingOverMobileDataEnabled(value)
     }
 }

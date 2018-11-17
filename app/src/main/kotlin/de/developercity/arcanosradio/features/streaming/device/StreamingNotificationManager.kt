@@ -75,7 +75,7 @@ class StreamingNotificationManager @Inject constructor(
     fun showNowPlayingNotification(
         song: String,
         artist: String,
-        albumArtUrl: String?,
+        albumArtUrl: String? = null,
         defaultAlbumArt: Bitmap,
         @DrawableRes actionIcon: Int,
         @StringRes actionDescription: Int,
@@ -106,7 +106,7 @@ class StreamingNotificationManager @Inject constructor(
                 NotificationChannel(
                     CHANNEL_ID,
                     resourceProvider.getString(R.string.now_playing_notification_channel_name),
-                    NotificationManager.IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
                     description = resourceProvider.getString(R.string.now_playing_notification_channel_description)
                     lockscreenVisibility = Notification.VISIBILITY_PUBLIC

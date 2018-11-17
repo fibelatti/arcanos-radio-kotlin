@@ -1,6 +1,6 @@
 package de.developercity.arcanosradio.features.appstate.domain
 
-import de.developercity.arcanosradio.features.streaming.domain.NetworkState
+import de.developercity.arcanosradio.features.streaming.domain.NetworkType
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 
@@ -14,4 +14,4 @@ class UpdateStreamVolume(val volume: Int) : UpdateStateAction()
 
 class UpdateNowPlaying(val nowPlaying: NowPlaying) : UpdateStateAction()
 
-class UpdateNetworkState(val networkState: NetworkState) : UpdateStateAction()
+class UpdateNetworkState(val networkType: NetworkType) : UpdateStateAction()

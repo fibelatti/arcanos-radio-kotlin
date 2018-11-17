@@ -23,13 +23,23 @@ class RadioStreamer @Inject constructor(
     private val mediaPlayer by lazy {
         MediaPlayer().apply {
             setAudioAttributes(AudioAttributes.Builder().setContentType(CONTENT_TYPE_MUSIC).build())
-            setOnPreparedListener {
+            setOnPreparedListener { mp ->
                 if (shouldStopAsync) {
-                    it.stop()
+                    mp.stop()
                 } else {
-                    it.start()
+                    mp.start()
                     appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Playing))
                 }
+            }
+
+            /*
+             * Called when the network has changed. The previous connection stream will complete
+             * and a new one should be started.
+             *
+             */
+            setOnCompletionListener {
+                tryToStop()
+                appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldStart))
             }
         }
     }
@@ -93,7 +103,7 @@ class RadioStreamer @Inject constructor(
 
     private fun MediaPlayer.tryToStop() {
         try {
-            pause()
+            stop()
             reset()
         } catch (ignore: IllegalStateException) {
             shouldStopAsync = true
