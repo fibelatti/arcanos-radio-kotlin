@@ -40,6 +40,7 @@ class NowPlayingActivity :
     lateinit var nowPlayingPresenter: NowPlayingPresenter
 
     private val defaultConstraintSet = ConstraintSet()
+    private val currentConstraintSet = ConstraintSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,8 +91,10 @@ class NowPlayingActivity :
 
     private fun toggleLyrics() {
         val constraintSet = if (layoutLyrics.isVisible()) {
-            defaultConstraintSet
+            currentConstraintSet
         } else {
+            currentConstraintSet.clone(layoutRoot)
+
             ConstraintSet().apply {
                 clone(this@NowPlayingActivity, R.layout.activity_now_playing_with_lyrics)
             }
@@ -140,9 +143,6 @@ class NowPlayingActivity :
         textViewSong.setText(R.string.now_playing_default_title)
         textViewArtist.setText(R.string.now_playing_default_subtitle)
         buttonLyrics.setText(R.string.now_playing_show_lyrics)
-        buttonLyrics.gone()
-        buttonOpenInBrowser.gone()
-        buttonShare.gone()
     }
 
     override fun showNetworkNotAvailable() {
@@ -152,9 +152,6 @@ class NowPlayingActivity :
         textViewSong.setText(R.string.now_playing_default_title)
         textViewArtist.setText(R.string.error_network)
         buttonLyrics.setText(R.string.now_playing_show_lyrics)
-        buttonLyrics.gone()
-        buttonOpenInBrowser.gone()
-        buttonShare.gone()
     }
 
     override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {

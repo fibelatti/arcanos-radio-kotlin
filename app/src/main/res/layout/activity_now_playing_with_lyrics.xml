@@ -27,8 +27,8 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         android:id="@+id/buttonPlayControl"
         style="@style/AppTheme.ExtendedFab"
         android:layout_marginLeft="@dimen/margin_regular"
-        android:text="@string/now_playing_buffering"
-        app:icon="@drawable/ic_buffering"
+        android:text="@string/now_playing_play"
+        app:icon="@drawable/ic_play"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAlbumArt"
         app:layout_constraintLeft_toRightOf="@+id/imageViewAlbumArt"
         app:layout_constraintRight_toRightOf="parent" />
@@ -53,16 +53,17 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_regular"
         android:gravity="center"
+        android:text="@string/now_playing_default_subtitle"
         app:layout_constraintLeft_toRightOf="@+id/imageViewAlbumArt"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSong"
-        tools:text="Dark Chest of Wonders" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewSong" />
 
     <Button
         android:id="@+id/buttonLyrics"
         style="@style/AppTheme.ButtonPrimary.Small"
         android:layout_marginTop="@dimen/margin_regular"
         android:text="@string/now_playing_hide_lyrics"
+        android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewAlbumArt" />
 
@@ -71,6 +72,7 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="@dimen/padding_regular"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/textViewVolume"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
