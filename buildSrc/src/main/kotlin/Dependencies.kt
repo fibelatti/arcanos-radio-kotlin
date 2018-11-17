@@ -1,6 +1,6 @@
 object Versions {
     const val gradlePluginVersion = "3.2.1"
-    const val kotlinVersion = "1.3.0"
+    const val kotlinVersion = "1.3.10"
     const val dexCountPlugin = "0.8.2"
     const val jacocoVersion = "0.8.1"
 
@@ -10,13 +10,15 @@ object Versions {
 
     const val buildToolsVersion = "28.0.3"
 
-    internal const val appCompatVersion = "1.0.0"
+    internal const val appCompatVersion = "1.0.2"
     internal const val materialDesignVersion = "1.0.0"
-    internal const val constraintLayoutVersion = "2.0.0-alpha1"
+    internal const val constraintLayoutVersion = "2.0.0-alpha2"
+    internal const val mediaVersion = "1.0.0"
+    internal const val supportAnnotationVersion = "1.0.0"
 
-    internal const val daggerVersion = "2.17"
+    internal const val daggerVersion = "2.19"
 
-    internal const val rxJavaVersion = "2.2.2"
+    internal const val rxJavaVersion = "2.2.3"
     internal const val rxAndroidVersion = "2.1.0"
 
     internal const val retrofitVersion = "2.4.0"
@@ -50,7 +52,7 @@ object SupportLibraryDependencies {
     val supportLibrary = "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     val materialDesign = "com.google.android.material:material:${Versions.materialDesignVersion}"
     val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayoutVersion}"
-    val media = "androidx.media:media:${Versions.appCompatVersion}"
+    val media = "androidx.media:media:${Versions.mediaVersion}"
 }
 
 object DIDependencies {
@@ -87,5 +89,5 @@ object TestDependencies {
     val kotlinTest = "org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlinVersion}"
     val mockitoCore = "org.mockito:mockito-core:${Versions.mockitoVersion}"
     val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockitoAndroidVersion}"
-    val supportAnnotations = "androidx.annotation:annotation:${Versions.appCompatVersion}"
+    val supportAnnotations = "androidx.annotation:annotation:${Versions.supportAnnotationVersion}"
 }
