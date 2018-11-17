@@ -4,9 +4,9 @@ import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_MUSIC
 import android.media.MediaPlayer
 import de.developercity.arcanosradio.features.appstate.domain.AppState
-import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
 import de.developercity.arcanosradio.features.appstate.domain.DefaultAppStateObserver
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
+import de.developercity.arcanosradio.features.appstate.domain.usecase.AddSideEffect
+import de.developercity.arcanosradio.features.appstate.domain.usecase.UpdateStreamState
 import de.developercity.arcanosradio.features.streaming.domain.NetworkState
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import io.reactivex.Observer
@@ -17,7 +17,8 @@ import javax.inject.Singleton
 
 @Singleton
 class RadioStreamer @Inject constructor(
-    private val appStateRepository: AppStateRepository
+    private val addSideEffect: AddSideEffect,
+    private val updateStreamState: UpdateStreamState
 ) {
 
     private val mediaPlayer by lazy {
@@ -28,7 +29,7 @@ class RadioStreamer @Inject constructor(
                     mp.stop()
                 } else {
                     mp.start()
-                    appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Playing))
+                    updateStreamState(StreamingState.Playing)
                 }
             }
 
@@ -39,7 +40,7 @@ class RadioStreamer @Inject constructor(
              */
             setOnCompletionListener {
                 tryToStop()
-                appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldStart))
+                updateStreamState(StreamingState.ShouldStart)
             }
         }
     }
@@ -49,7 +50,7 @@ class RadioStreamer @Inject constructor(
     private var shouldStopAsync: Boolean = false
 
     fun setup() {
-        appStateRepository.addSideEffect(object : Observer<AppState> by DefaultAppStateObserver {
+        addSideEffect(object : Observer<AppState> by DefaultAppStateObserver {
             override fun onSubscribe(disposable: Disposable) {
                 disposables.add(disposable)
             }
@@ -61,24 +62,24 @@ class RadioStreamer @Inject constructor(
                     is StreamingState.Interrupted -> {
                         if (state.streamingUrl.isNotEmpty() && state.networkState is NetworkState.Connected) {
                             mediaPlayer.tryToPrepareAsync(state.streamingUrl)
-                            appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Buffering))
+                            updateStreamState(StreamingState.Buffering)
                         }
                     }
                     is StreamingState.Buffering,
                     is StreamingState.Playing -> {
                         if (state.networkState is NetworkState.NotConnected) {
                             mediaPlayer.tryToStop()
-                            appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Interrupted))
+                            updateStreamState(StreamingState.Interrupted)
                         }
                     }
                     is StreamingState.ShouldPause -> {
                         mediaPlayer.tryToStop()
-                        appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Paused))
+                        updateStreamState(StreamingState.Paused)
                     }
                     is StreamingState.ShouldTerminate -> {
                         disposables.clear()
                         mediaPlayer.release()
-                        appStateRepository.dispatchAction(UpdateStreamState(StreamingState.NotInitialized))
+                        updateStreamState(StreamingState.NotInitialized)
                     }
                 }
 
@@ -96,7 +97,7 @@ class RadioStreamer @Inject constructor(
             shouldStopAsync = false
             setDataSource(streamingUrl)
             prepareAsync()
-            appStateRepository.dispatchAction(UpdateStreamState(StreamingState.Buffering))
+            updateStreamState(StreamingState.Buffering)
         } catch (ignore: IllegalStateException) {
         }
     }

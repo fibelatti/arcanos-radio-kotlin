@@ -15,9 +15,9 @@ import de.developercity.arcanosradio.core.extension.getServicePendingIntent
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
 import de.developercity.arcanosradio.core.platform.base.BaseService
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
-import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
-import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
+import de.developercity.arcanosradio.features.appstate.domain.usecase.GetAppState
+import de.developercity.arcanosradio.features.appstate.domain.usecase.UpdateNowPlaying
+import de.developercity.arcanosradio.features.appstate.domain.usecase.UpdateStreamState
 import de.developercity.arcanosradio.features.nowplaying.presentation.NowPlayingActivity
 import de.developercity.arcanosradio.features.streaming.domain.StreamingRepository
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
@@ -35,7 +35,11 @@ class StreamingService : BaseService() {
     @Inject
     lateinit var schedulerProvider: SchedulerProvider
     @Inject
-    lateinit var appStateRepository: AppStateRepository
+    lateinit var getAppState: GetAppState
+    @Inject
+    lateinit var updateStreamState: UpdateStreamState
+    @Inject
+    lateinit var updateNowPlaying: UpdateNowPlaying
     @Inject
     lateinit var streamingRepository: StreamingRepository
     @Inject
@@ -76,9 +80,9 @@ class StreamingService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            Action.ACTION_PLAY.value -> appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldStart))
-            Action.ACTION_PAUSE.value -> appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause))
-            Action.ACTION_DELETE.value -> appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldTerminate))
+            Action.ACTION_PLAY.value -> updateStreamState(StreamingState.ShouldStart)
+            Action.ACTION_PAUSE.value -> updateStreamState(StreamingState.ShouldPause)
+            Action.ACTION_DELETE.value -> updateStreamState(StreamingState.ShouldTerminate)
             else -> startNotification()
         }
 
@@ -127,26 +131,26 @@ class StreamingService : BaseService() {
             }
             .distinctUntilChanged()
             .subscribeOn(schedulerProvider.io())
-            .subscribe { appStateRepository.dispatchAction(UpdateNowPlaying(it)) }
+            .subscribe { updateNowPlaying(it) }
             .let(disposables::add)
     }
 
     private fun observeAppState() {
-        appStateRepository.getAppState()
+        getAppState()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.main())
             .subscribe { state ->
                 when (state.streamState) {
                     StreamingState.Buffering -> {
-                        mediaButtonCallback = { appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause)) }
+                        mediaButtonCallback = { updateStreamState(StreamingState.ShouldPause) }
                         showNowPlayingNotification(state.nowPlaying, R.drawable.ic_notification_buffering, R.string.now_playing_buffering, pauseIntent)
                     }
                     StreamingState.Playing -> {
-                        mediaButtonCallback = { appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause)) }
+                        mediaButtonCallback = { updateStreamState(StreamingState.ShouldPause) }
                         showNowPlayingNotification(state.nowPlaying, R.drawable.ic_notification_pause, R.string.now_playing_pause, pauseIntent)
                     }
                     StreamingState.Paused -> {
-                        mediaButtonCallback = { appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldStart)) }
+                        mediaButtonCallback = { updateStreamState(StreamingState.ShouldStart) }
                         showNowPlayingNotification(
                             nowPlaying = null,
                             actionIcon = R.drawable.ic_notification_play,
