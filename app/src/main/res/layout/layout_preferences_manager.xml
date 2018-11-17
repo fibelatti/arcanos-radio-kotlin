@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/preferences_layout_min_height"
+        android:paddingBottom="@dimen/padding_xlarge">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewPreferencesTitle"
+            style="@style/AppTheme.Text.Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_regular"
+            android:layout_marginRight="@dimen/margin_regular"
+            android:text="@string/preferences_title"
+            app:layout_constraintBottom_toTopOf="@+id/checkboxAllowStreamingOverMobileData"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkboxAllowStreamingOverMobileData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_regular"
+            android:layout_marginTop="@dimen/margin_regular"
+            android:layout_marginRight="@dimen/margin_regular"
+            android:text="@string/preferences_streaming_over_mobile_data_description"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPreferencesTitle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

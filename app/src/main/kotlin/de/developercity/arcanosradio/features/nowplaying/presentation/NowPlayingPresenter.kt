@@ -1,5 +1,6 @@
 package de.developercity.arcanosradio.features.nowplaying.presentation
 
+import de.developercity.arcanosradio.core.persistence.CurrentInstallSharedPreferences
 import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
@@ -11,21 +12,24 @@ import javax.inject.Inject
 
 class NowPlayingPresenter @Inject constructor(
     schedulerProvider: SchedulerProvider,
-    private val appStateRepository: AppStateRepository
+    private val appStateRepository: AppStateRepository,
+    private val currentInstallSharedPreferences: CurrentInstallSharedPreferences
 ) : BasePresenter<NowPlayingPresenter.View>(schedulerProvider) {
 
     interface View : BaseContract.View {
-        fun buffering()
+        fun showBuffering()
 
-        fun playing()
+        fun showPlaying()
 
-        fun idle()
+        fun showIdle()
 
         fun showNetworkNotAvailable()
 
-        fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
+        fun updateSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
 
         fun updateVolumeSeeker(volume: Int)
+
+        fun showPreferencesManager(streamingOverMobileDataEnabled: Boolean)
     }
 
     fun setup() {
@@ -35,15 +39,15 @@ class NowPlayingPresenter @Inject constructor(
             .subscribe { appState ->
                 when (appState.streamState) {
                     StreamingState.Buffering -> {
-                        appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
-                        view?.buffering()
+                        appState.nowPlaying?.let { view?.updateSongMetadata(it, appState.shareUrl) }
+                        view?.showBuffering()
                     }
                     StreamingState.Playing -> {
-                        appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
-                        view?.playing()
+                        appState.nowPlaying?.let { view?.updateSongMetadata(it, appState.shareUrl) }
+                        view?.showPlaying()
                     }
                     StreamingState.Paused,
-                    StreamingState.NotInitialized -> view?.idle()
+                    StreamingState.NotInitialized -> view?.showIdle()
                     StreamingState.Interrupted -> view?.showNetworkNotAvailable()
                 }
 
@@ -58,5 +62,15 @@ class NowPlayingPresenter @Inject constructor(
 
     fun pause() {
         appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause))
+    }
+
+    fun getPreferences() {
+        view?.showPreferencesManager(
+            streamingOverMobileDataEnabled = currentInstallSharedPreferences.getStreamingOverMobileDataEnabled()
+        )
+    }
+
+    fun setStreamingOverMobileDataEnabled(value: Boolean) {
+        currentInstallSharedPreferences.setStreamingOverMobileDataEnabled(value)
     }
 }

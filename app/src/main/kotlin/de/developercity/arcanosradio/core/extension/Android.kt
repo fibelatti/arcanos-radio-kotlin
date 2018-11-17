@@ -20,6 +20,10 @@ inline fun <reified T> Context.getSystemService(): T? =
 
 fun ConnectivityManager?.isConnected(): Boolean = this?.activeNetworkInfo?.isConnected.orFalse()
 
+@Suppress("DEPRECATION")
+fun ConnectivityManager?.isConnectedToWifi(): Boolean =
+    this?.activeNetworkInfo?.run { isConnected && type == ConnectivityManager.TYPE_WIFI }.orFalse()
+
 fun AudioManager?.getMusicVolume(): Int = this?.getStreamVolume(AudioManager.STREAM_MUSIC).orZero()
 
 fun AudioManager?.setMusicVolume(volume: Int) {

@@ -23,18 +23,24 @@ import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.extension.visible
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
+import de.developercity.arcanosradio.features.preferences.PreferencesManager
+import de.developercity.arcanosradio.features.preferences.PreferencesManagerDelegate
 import de.developercity.arcanosradio.features.streaming.device.StreamingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import de.developercity.arcanosradio.features.streaming.domain.models.Song
 import kotlinx.android.synthetic.main.activity_now_playing.*
 import javax.inject.Inject
 
-class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
+class NowPlayingActivity :
+    BaseActivity(),
+    NowPlayingPresenter.View,
+    PreferencesManager by PreferencesManagerDelegate() {
 
     @Inject
     lateinit var nowPlayingPresenter: NowPlayingPresenter
 
     private val defaultConstraintSet = ConstraintSet()
+    private val currentConstraintSet = ConstraintSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +63,7 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         buttonPlayControl.startAnimation(AnimationUtils.loadAnimation(this, R.anim.expand))
         buttonLyrics.setOnClickListener { toggleLyrics() }
         setupVolumeControls()
+        buttonPreferences.setOnClickListener { nowPlayingPresenter.getPreferences() }
     }
 
     private fun setupVolumeControls() {
@@ -80,8 +87,10 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
 
     private fun toggleLyrics() {
         val constraintSet = if (layoutLyrics.isVisible()) {
-            defaultConstraintSet
+            currentConstraintSet
         } else {
+            currentConstraintSet.clone(layoutRoot)
+
             ConstraintSet().apply {
                 clone(this@NowPlayingActivity, R.layout.activity_now_playing_with_lyrics)
             }
@@ -96,13 +105,13 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         nowPlayingPresenter.detachView()
     }
 
-    override fun buffering() {
+    override fun showBuffering() {
         setupButtonPlayControl(R.string.now_playing_buffering, R.drawable.ic_buffering) {
             nowPlayingPresenter.pause()
         }
     }
 
-    override fun playing() {
+    override fun showPlaying() {
         setupButtonPlayControl(R.string.now_playing_pause, R.drawable.ic_pause) {
             nowPlayingPresenter.pause()
         }
@@ -120,7 +129,7 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         }
     }
 
-    override fun idle() {
+    override fun showIdle() {
         defaultConstraintSet.applyTo(layoutRoot)
         imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
         setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
@@ -130,16 +139,18 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
         textViewSong.setText(R.string.now_playing_default_title)
         textViewArtist.setText(R.string.now_playing_default_subtitle)
         buttonLyrics.setText(R.string.now_playing_show_lyrics)
-        buttonLyrics.gone()
-        buttonOpenInBrowser.gone()
-        buttonShare.gone()
     }
 
     override fun showNetworkNotAvailable() {
-        // TODO
+        defaultConstraintSet.applyTo(layoutRoot)
+        imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
+        setupButtonPlayControl(R.string.now_playing_no_connection, R.drawable.ic_no_connection) {}
+        textViewSong.setText(R.string.now_playing_default_title)
+        textViewArtist.setText(R.string.error_network)
+        buttonLyrics.setText(R.string.now_playing_show_lyrics)
     }
 
-    override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
+    override fun updateSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
         with(nowPlaying.song) {
             imageViewAlbumArt.load(albumArt, R.drawable.arcanos)
             textViewSong.text = name
@@ -153,6 +164,12 @@ class NowPlayingActivity : BaseActivity(), NowPlayingPresenter.View {
 
     override fun updateVolumeSeeker(volume: Int) {
         seekVolume.progress = volume
+    }
+
+    override fun showPreferencesManager(streamingOverMobileDataEnabled: Boolean) {
+        showPreferencesManager(this, streamingOverMobileDataEnabled) { newValue ->
+            nowPlayingPresenter.setStreamingOverMobileDataEnabled(newValue)
+        }
     }
 
     private fun setupOpenInBrowser(artistUrl: String) {

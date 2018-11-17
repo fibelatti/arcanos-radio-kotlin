@@ -51,6 +51,7 @@
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="bottomSheetStyle">@style/AppTheme.BottomSheetModal</item>
+        <item name="checkboxStyle">@style/AppTheme.Checkbox</item>
         <item name="android:windowIsFloating">false</item>
     </style>
 
@@ -80,8 +81,9 @@
     </style>
 
     <style name="AppTheme.Checkbox" parent="Base.Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">@dimen/text_size_regular</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="buttonTint">@drawable/selector_checkbox_color</item>
     </style>
 
     <style name="AppTheme.ButtonPrimary" parent="Base.Widget.AppCompat.Button.Borderless.Colored">

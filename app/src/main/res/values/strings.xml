@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Common -->
-    <string name="hint_ok">OK</string>
-    <string name="hint_yes">Yes</string>
-    <string name="hint_no">No</string>
-    <string name="hint_save">Save</string>
-    <string name="hint_edit">Edit</string>
-    <string name="hint_delete">Delete</string>
-    <string name="hint_continue">Continue</string>
-    <string name="hint_cancel">Cancel</string>
-    <string name="hint_search">Search</string>
-    <string name="hint_dismiss">Dismiss</string>
-
-    <string name="generic_log_error">Error in %1$s (%2$s)</string>
-
-    <string name="generic_msg_error">Oops! Something went wrong. Please try again.</string>
+    <string name="error_network">Please check your connection.</string>
 
     <!-- Now Playing -->
     <string name="now_playing_default_title">Arcanos Web Rock</string>
@@ -25,6 +12,7 @@
     <string name="now_playing_play">Play</string>
     <string name="now_playing_pause">Pause</string>
     <string name="now_playing_buffering">Buffering</string>
+    <string name="now_playing_no_connection">No connection</string>
     <string name="now_playing_volume">Volume</string>
 
     <string name="now_playing_show_lyrics">Lyrics</string>
@@ -36,7 +24,13 @@
     <string name="now_playing_share_title">Share Arcanos Web Rock</string>
     <string name="now_playing_share_message">I\'m listening to %1$s from %2$s on Arcanos Web Rock! Get the app at %3$s - www.arcanosmc.com.br #ArcanosWebRock</string>
 
+    <string name="now_playing_preferences">Preferences</string>
+
     <!-- Now Playing Notification -->
     <string name="now_playing_notification_channel_name">Radio Streaming</string>
     <string name="now_playing_notification_channel_description">Radio playback controls</string>
+
+    <!-- Preferences -->
+    <string name="preferences_title">Preferences</string>
+    <string name="preferences_streaming_over_mobile_data_description">Enable streaming over mobile data</string>
 </resources>
