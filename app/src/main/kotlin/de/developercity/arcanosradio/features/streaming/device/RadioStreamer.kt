@@ -2,6 +2,7 @@ package de.developercity.arcanosradio.features.streaming.device
 
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_MUSIC
+import android.media.AudioManager
 import android.media.MediaPlayer
 import de.developercity.arcanosradio.features.appstate.domain.AppState
 import de.developercity.arcanosradio.features.appstate.domain.DefaultAppStateObserver
@@ -17,6 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 class RadioStreamer @Inject constructor(
+    private val audioManager: AudioManager?,
     private val addSideEffect: AddSideEffect,
     private val updateStreamState: UpdateStreamState
 ) {
@@ -45,6 +47,32 @@ class RadioStreamer @Inject constructor(
         }
     }
 
+    private val audioFocusChangeListener = { focusChange: Int ->
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> updateStreamState(StreamingState.ShouldStart)
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                hasAudioFocus = false
+                updateStreamState(StreamingState.ShouldPause)
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private var hasAudioFocus: Boolean = false
+        get() {
+            return if (field) {
+                field
+            } else {
+                field = audioManager?.requestAudioFocus(
+                    audioFocusChangeListener,
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN
+                ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+
+                field
+            }
+        }
+
     private val disposables = CompositeDisposable()
 
     private var shouldStopAsync: Boolean = false
@@ -60,7 +88,10 @@ class RadioStreamer @Inject constructor(
                     is StreamingState.NotInitialized,
                     is StreamingState.ShouldStart,
                     is StreamingState.Interrupted -> {
-                        if (state.streamingUrl.isNotEmpty() && state.networkState is NetworkState.Connected) {
+                        if (hasAudioFocus &&
+                            state.streamingUrl.isNotEmpty() &&
+                            state.networkState is NetworkState.Connected
+                        ) {
                             mediaPlayer.tryToPrepareAsync(state.streamingUrl)
                             updateStreamState(StreamingState.Buffering)
                         }
