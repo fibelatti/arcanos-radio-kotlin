@@ -63,11 +63,7 @@ class NowPlayingActivity :
         buttonPlayControl.startAnimation(AnimationUtils.loadAnimation(this, R.anim.expand))
         buttonLyrics.setOnClickListener { toggleLyrics() }
         setupVolumeControls()
-        buttonPreferences.setOnClickListener {
-            showPreferencesManager(this) { streamingOverMobileEnabled ->
-                nowPlayingPresenter.setStreamingOverMobileDataEnabled(streamingOverMobileEnabled)
-            }
-        }
+        buttonPreferences.setOnClickListener { nowPlayingPresenter.getPreferences() }
     }
 
     private fun setupVolumeControls() {
@@ -168,6 +164,12 @@ class NowPlayingActivity :
 
     override fun updateVolumeSeeker(volume: Int) {
         seekVolume.progress = volume
+    }
+
+    override fun showPreferencesManager(streamingOverMobileDataEnabled: Boolean) {
+        showPreferencesManager(this, streamingOverMobileDataEnabled) { newValue ->
+            nowPlayingPresenter.setStreamingOverMobileDataEnabled(newValue)
+        }
     }
 
     private fun setupOpenInBrowser(artistUrl: String) {

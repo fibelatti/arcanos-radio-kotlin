@@ -28,6 +28,8 @@ class NowPlayingPresenter @Inject constructor(
         fun updateSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
 
         fun updateVolumeSeeker(volume: Int)
+
+        fun showPreferencesManager(streamingOverMobileDataEnabled: Boolean)
     }
 
     fun setup() {
@@ -60,6 +62,12 @@ class NowPlayingPresenter @Inject constructor(
 
     fun pause() {
         appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause))
+    }
+
+    fun getPreferences() {
+        view?.showPreferencesManager(
+            streamingOverMobileDataEnabled = currentInstallSharedPreferences.getStreamingOverMobileDataEnabled()
+        )
     }
 
     fun setStreamingOverMobileDataEnabled(value: Boolean) {
