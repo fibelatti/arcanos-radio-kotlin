@@ -109,13 +109,13 @@ class NowPlayingActivity :
         nowPlayingPresenter.detachView()
     }
 
-    override fun buffering() {
+    override fun showBuffering() {
         setupButtonPlayControl(R.string.now_playing_buffering, R.drawable.ic_buffering) {
             nowPlayingPresenter.pause()
         }
     }
 
-    override fun playing() {
+    override fun showPlaying() {
         setupButtonPlayControl(R.string.now_playing_pause, R.drawable.ic_pause) {
             nowPlayingPresenter.pause()
         }
@@ -133,7 +133,7 @@ class NowPlayingActivity :
         }
     }
 
-    override fun idle() {
+    override fun showIdle() {
         defaultConstraintSet.applyTo(layoutRoot)
         imageViewAlbumArt.setImageDrawable(getDrawable(R.drawable.arcanos))
         setupButtonPlayControl(R.string.now_playing_play, R.drawable.ic_play) {
@@ -154,7 +154,7 @@ class NowPlayingActivity :
         buttonLyrics.setText(R.string.now_playing_show_lyrics)
     }
 
-    override fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
+    override fun updateSongMetadata(nowPlaying: NowPlaying, shareUrl: String) {
         with(nowPlaying.song) {
             imageViewAlbumArt.load(albumArt, R.drawable.arcanos)
             textViewSong.text = name

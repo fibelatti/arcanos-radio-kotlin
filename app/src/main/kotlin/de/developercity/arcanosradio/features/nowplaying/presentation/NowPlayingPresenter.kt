@@ -17,15 +17,15 @@ class NowPlayingPresenter @Inject constructor(
 ) : BasePresenter<NowPlayingPresenter.View>(schedulerProvider) {
 
     interface View : BaseContract.View {
-        fun buffering()
+        fun showBuffering()
 
-        fun playing()
+        fun showPlaying()
 
-        fun idle()
+        fun showIdle()
 
         fun showNetworkNotAvailable()
 
-        fun showSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
+        fun updateSongMetadata(nowPlaying: NowPlaying, shareUrl: String)
 
         fun updateVolumeSeeker(volume: Int)
     }
@@ -37,15 +37,15 @@ class NowPlayingPresenter @Inject constructor(
             .subscribe { appState ->
                 when (appState.streamState) {
                     StreamingState.Buffering -> {
-                        appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
-                        view?.buffering()
+                        appState.nowPlaying?.let { view?.updateSongMetadata(it, appState.shareUrl) }
+                        view?.showBuffering()
                     }
                     StreamingState.Playing -> {
-                        appState.nowPlaying?.let { view?.showSongMetadata(it, appState.shareUrl) }
-                        view?.playing()
+                        appState.nowPlaying?.let { view?.updateSongMetadata(it, appState.shareUrl) }
+                        view?.showPlaying()
                     }
                     StreamingState.Paused,
-                    StreamingState.NotInitialized -> view?.idle()
+                    StreamingState.NotInitialized -> view?.showIdle()
                     StreamingState.Interrupted -> view?.showNetworkNotAvailable()
                 }
 
