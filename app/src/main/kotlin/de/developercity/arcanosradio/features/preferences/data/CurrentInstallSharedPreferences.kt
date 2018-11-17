@@ -1,4 +1,4 @@
-package de.developercity.arcanosradio.core.persistence
+package de.developercity.arcanosradio.features.preferences.data
 
 import android.content.SharedPreferences
 import de.developercity.arcanosradio.core.extension.get

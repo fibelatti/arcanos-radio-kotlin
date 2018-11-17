@@ -23,8 +23,8 @@ import de.developercity.arcanosradio.core.extension.setMusicVolume
 import de.developercity.arcanosradio.core.extension.visible
 import de.developercity.arcanosradio.core.platform.base.BaseActivity
 import de.developercity.arcanosradio.core.platform.base.BaseIntentBuilder
-import de.developercity.arcanosradio.features.preferences.PreferencesManager
-import de.developercity.arcanosradio.features.preferences.PreferencesManagerDelegate
+import de.developercity.arcanosradio.features.preferences.presentation.PreferencesManager
+import de.developercity.arcanosradio.features.preferences.presentation.PreferencesManagerDelegate
 import de.developercity.arcanosradio.features.streaming.device.StreamingService
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import de.developercity.arcanosradio.features.streaming.domain.models.Song

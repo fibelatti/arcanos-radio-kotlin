@@ -1,4 +1,4 @@
-package de.developercity.arcanosradio.features.preferences
+package de.developercity.arcanosradio.features.preferences.presentation
 
 import android.content.Context
 import com.google.android.material.bottomsheet.BottomSheetDialog

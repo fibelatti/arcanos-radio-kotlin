@@ -1,11 +1,11 @@
 package de.developercity.arcanosradio.features.nowplaying.presentation
 
-import de.developercity.arcanosradio.core.persistence.CurrentInstallSharedPreferences
 import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.usecase.GetAppState
 import de.developercity.arcanosradio.features.appstate.domain.usecase.UpdateStreamState
+import de.developercity.arcanosradio.features.preferences.data.CurrentInstallSharedPreferences
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import javax.inject.Inject

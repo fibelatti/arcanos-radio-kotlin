@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import de.developercity.arcanosradio.core.extension.getMusicVolume
 import de.developercity.arcanosradio.core.extension.isConnected
 import de.developercity.arcanosradio.core.extension.isConnectedToWifi
-import de.developercity.arcanosradio.core.persistence.CurrentInstallSharedPreferences
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppState
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
@@ -15,6 +14,7 @@ import de.developercity.arcanosradio.features.appstate.domain.UpdateStateAction
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamStateAction
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamVolumeAction
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamingConfigAction
+import de.developercity.arcanosradio.features.preferences.data.CurrentInstallSharedPreferences
 import de.developercity.arcanosradio.features.streaming.domain.NetworkState
 import de.developercity.arcanosradio.features.streaming.domain.NetworkType
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
