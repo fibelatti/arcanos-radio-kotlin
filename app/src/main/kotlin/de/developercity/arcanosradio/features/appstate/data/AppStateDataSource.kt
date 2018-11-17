@@ -9,12 +9,12 @@ import de.developercity.arcanosradio.core.persistence.CurrentInstallSharedPrefer
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
 import de.developercity.arcanosradio.features.appstate.domain.AppState
 import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
-import de.developercity.arcanosradio.features.appstate.domain.UpdateNetworkState
-import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlaying
+import de.developercity.arcanosradio.features.appstate.domain.UpdateNetworkStateAction
+import de.developercity.arcanosradio.features.appstate.domain.UpdateNowPlayingAction
 import de.developercity.arcanosradio.features.appstate.domain.UpdateStateAction
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamVolume
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamingConfig
+import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamStateAction
+import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamVolumeAction
+import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamingConfigAction
 import de.developercity.arcanosradio.features.streaming.domain.NetworkState
 import de.developercity.arcanosradio.features.streaming.domain.NetworkType
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
@@ -59,14 +59,14 @@ class AppStateDataSource @Inject constructor(
     }
 
     private fun updateState(updateStateAction: UpdateStateAction): AppState = when (updateStateAction) {
-        is UpdateStreamingConfig -> state.copy(
+        is UpdateStreamingConfigAction -> state.copy(
             shareUrl = updateStateAction.shareUrl,
-            streamingUrl = updateStateAction.StreamingUrl
+            streamingUrl = updateStateAction.streamingUrl
         )
-        is UpdateStreamState -> state.copy(streamState = updateStateAction.streamState)
-        is UpdateStreamVolume -> state.copy(streamVolume = updateStateAction.volume)
-        is UpdateNowPlaying -> state.copy(nowPlaying = updateStateAction.nowPlaying)
-        is UpdateNetworkState -> state.copy(networkState = getNetworkState(updateStateAction.networkType))
+        is UpdateStreamStateAction -> state.copy(streamState = updateStateAction.streamState)
+        is UpdateStreamVolumeAction -> state.copy(streamVolume = updateStateAction.volume)
+        is UpdateNowPlayingAction -> state.copy(nowPlaying = updateStateAction.nowPlaying)
+        is UpdateNetworkStateAction -> state.copy(networkState = getNetworkState(updateStateAction.networkType))
     }
 
     private fun getNetworkState(networkType: NetworkType? = null): NetworkState {

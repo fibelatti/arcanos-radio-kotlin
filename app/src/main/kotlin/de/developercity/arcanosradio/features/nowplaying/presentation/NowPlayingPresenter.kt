@@ -4,15 +4,16 @@ import de.developercity.arcanosradio.core.persistence.CurrentInstallSharedPrefer
 import de.developercity.arcanosradio.core.platform.base.BaseContract
 import de.developercity.arcanosradio.core.platform.base.BasePresenter
 import de.developercity.arcanosradio.core.provider.SchedulerProvider
-import de.developercity.arcanosradio.features.appstate.domain.AppStateRepository
-import de.developercity.arcanosradio.features.appstate.domain.UpdateStreamState
+import de.developercity.arcanosradio.features.appstate.domain.usecase.GetAppState
+import de.developercity.arcanosradio.features.appstate.domain.usecase.UpdateStreamState
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import de.developercity.arcanosradio.features.streaming.domain.models.NowPlaying
 import javax.inject.Inject
 
 class NowPlayingPresenter @Inject constructor(
     schedulerProvider: SchedulerProvider,
-    private val appStateRepository: AppStateRepository,
+    private val getAppState: GetAppState,
+    private val updateStreamState: UpdateStreamState,
     private val currentInstallSharedPreferences: CurrentInstallSharedPreferences
 ) : BasePresenter<NowPlayingPresenter.View>(schedulerProvider) {
 
@@ -33,7 +34,7 @@ class NowPlayingPresenter @Inject constructor(
     }
 
     fun setup() {
-        appStateRepository.getAppState()
+        getAppState()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.main())
             .subscribe { appState ->
@@ -57,11 +58,11 @@ class NowPlayingPresenter @Inject constructor(
     }
 
     fun play() {
-        appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldStart))
+        updateStreamState(StreamingState.ShouldStart)
     }
 
     fun pause() {
-        appStateRepository.dispatchAction(UpdateStreamState(StreamingState.ShouldPause))
+        updateStreamState(StreamingState.ShouldPause)
     }
 
     fun getPreferences() {
