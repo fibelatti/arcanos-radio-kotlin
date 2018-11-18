@@ -20,7 +20,7 @@ import de.developercity.arcanosradio.features.streaming.domain.NetworkType
 import de.developercity.arcanosradio.features.streaming.domain.StreamingState
 import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,8 +41,8 @@ class AppStateDataSource @Inject constructor(
         streamVolume = audioManager.getMusicVolume(),
         networkState = getNetworkState()
     )
-    private val observableState: PublishSubject<AppState> = PublishSubject.create()
-    private val sideEffects: PublishSubject<AppState> = PublishSubject.create()
+    private val observableState: BehaviorSubject<AppState> = BehaviorSubject.createDefault(state)
+    private val sideEffects: BehaviorSubject<AppState> = BehaviorSubject.createDefault(state)
     private val observableSideEffects: Observable<AppState> = sideEffects.distinctUntilChanged()
 
     override fun getAppState(): Observable<AppState> = observableState.distinctUntilChanged()
