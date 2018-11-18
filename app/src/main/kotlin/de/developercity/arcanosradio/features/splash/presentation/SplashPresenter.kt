@@ -17,7 +17,7 @@ class SplashPresenter @Inject constructor(
         fun ready()
     }
 
-    fun setup() {
+    fun bootstrap() {
         streamingRepository.getConfiguration()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.main())

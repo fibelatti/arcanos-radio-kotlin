@@ -21,7 +21,7 @@ class SplashActivity : BaseActivity(), SplashPresenter.View {
         injector.inject(this)
 
         splashPresenter.attachView(this)
-        splashPresenter.setup()
+        splashPresenter.bootstrap()
     }
 
     override fun onDestroy() {
