@@ -32,8 +32,8 @@ object Versions {
     internal const val testRunnerVersion = "1.0.1"
     internal const val mockitoVersion = "2.23.0"
     internal const val mockitoAndroidVersion = "2.18.3"
-    internal const val junit5pluginVersion = "1.2.0.0"
-    internal const val junit5Version = "5.2.0"
+    internal const val junit5pluginVersion = "1.3.1.1"
+    internal const val junit5Version = "5.3.1"
 }
 
 object Classpaths {
