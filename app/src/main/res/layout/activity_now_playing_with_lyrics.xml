@@ -29,9 +29,10 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         android:layout_marginLeft="@dimen/margin_regular"
         android:text="@string/now_playing_play"
         app:icon="@drawable/ic_play"
-        app:layout_constraintBottom_toBottomOf="@+id/imageViewAlbumArt"
+        app:layout_constraintBottom_toTopOf="@+id/layoutLyrics"
         app:layout_constraintLeft_toRightOf="@+id/imageViewAlbumArt"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewArtist" />
 
     <TextView
         android:id="@+id/textViewSong"
@@ -40,7 +41,10 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_regular"
         android:gravity="center"
+        android:maxLines="3"
         android:text="@string/now_playing_default_title"
+        app:autoSizeMinTextSize="@dimen/text_size_small"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/textViewArtist"
         app:layout_constraintLeft_toRightOf="@+id/imageViewAlbumArt"
         app:layout_constraintRight_toRightOf="parent"
@@ -53,7 +57,10 @@ Alternate layout to activity_now_playing.xml, to be used for a ConstraintLayout 
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_regular"
         android:gravity="center"
+        android:maxLines="2"
         android:text="@string/now_playing_default_subtitle"
+        app:autoSizeMinTextSize="@dimen/text_size_small"
+        app:autoSizeTextType="uniform"
         app:layout_constraintLeft_toRightOf="@+id/imageViewAlbumArt"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSong" />
